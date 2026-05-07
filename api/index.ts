@@ -37,8 +37,9 @@ const configureCloudinary = () => {
 // INITIALIZE
 configureCloudinary();
 
+const app = express();
+
 async function startServer() {
-  const app = express();
   const PORT = 3000;
 
   // Security Headers (configured to allow Vite/Firebase needs)
@@ -227,12 +228,17 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[DigiTechLabs] Server running on http://localhost:${PORT}`);
-  });
+  // Only start listener if not being imported (Vercel serverless functions shouldn't call listen, but Cloud Run should)
+  if (process.env.PORT || process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`[DigiTechLabs] Server running on http://localhost:${PORT} (Vercel Mode Ready)`);
+    });
+  }
 }
 
 startServer().catch((err) => {
   console.error("Error starting server:", err);
-  process.exit(1);
+  if (process.env.NODE_ENV !== 'production') process.exit(1);
 });
+
+export default app;
