@@ -157,30 +157,82 @@ export default function AdminMedia() {
     }
   };
 
-  const handleDelete = async (asset: MediaAsset) => {
-    if (!window.confirm(`Are you sure you want to permanently delete "${asset.fileName}"? This will remove it from the library and Cloudinary CDN.`)) return;
+  const handleDeleteAll = async () => {
+    if (assets.length === 0) return;
 
+    setLoading(true);
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const asset of assets) {
+      try {
+        // We reuse the logic from handleDelete but without the individual confirm
+        if (asset.publicId) {
+          const resourceType = asset.fileType.startsWith('image') ? 'image' : 'video';
+          const response = await fetch('/api/v1/media/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ publicId: asset.publicId, resourceType })
+          });
+          
+          // Check content type before parsing JSON
+          const contentType = response.headers.get("content-type");
+          let result: any = {};
+          
+          if (contentType && contentType.includes("application/json")) {
+            result = await response.json();
+          } else {
+            console.warn(`Cloudinary delete returned non-JSON for ${asset.publicId}`);
+          }
+
+          if (!response.ok) {
+            console.warn(`Cloudinary delete failed for ${asset.publicId}:`, result.error);
+          }
+        }
+        await deleteDoc(doc(db, 'media', asset.id));
+        successCount++;
+      } catch (err) {
+        console.error(`Failed to delete ${asset.id}:`, err);
+        errorCount++;
+      }
+    }
+
+    setLoading(false);
+    alert(`Deletion complete. Success: ${successCount}, Failed: ${errorCount}`);
+  };
+
+  const handleDelete = async (asset: MediaAsset) => {
     setDeletingIds(prev => new Set(prev).add(asset.id));
 
     try {
       // 1. Delete from Cloudinary via our backend API if we have a publicId
       if (asset.publicId) {
         console.log(`Attempting to delete Cloudinary asset: ${asset.publicId}`);
+        const resourceType = asset.fileType.startsWith('image') ? 'image' : 'video';
         const response = await fetch('/api/v1/media/delete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ publicId: asset.publicId })
+          body: JSON.stringify({ publicId: asset.publicId, resourceType })
         });
 
-        const result = await response.json();
+        // Check content type before parsing JSON
+        const contentType = response.headers.get("content-type");
+        let result: any = {};
+        
+        if (contentType && contentType.includes("application/json")) {
+          result = await response.json();
+        } else {
+          const errorText = await response.text();
+          console.error("Non-JSON response from server:", errorText);
+          throw new Error(`Cloudinary service returned an invalid response (HTML/Text). Status: ${response.status}`);
+        }
 
         if (!response.ok) {
           throw new Error(result.error || 'Failed to delete from Cloudinary');
         }
 
-        // If status is 'success' or 'not_found', proceed to delete from Firestore
-        // 'not_found' means it was already gone from Cloudinary, so we should clean up our DB
-        if (result.status !== 'success' && result.status !== 'not_found') {
+        // If status is 'success', we can continue
+        if (result.status !== 'success') {
           throw new Error("Unexpected response from Cloudinary deletion service.");
         }
       } else {
@@ -188,7 +240,11 @@ export default function AdminMedia() {
       }
 
       // 2. Delete from Firestore
-      await deleteDoc(doc(db, 'media', asset.id));
+      try {
+        await deleteDoc(doc(db, 'media', asset.id));
+      } catch (dbError) {
+        handleFirestoreError(dbError, OperationType.DELETE, `media/${asset.id}`);
+      }
     } catch (error) {
       console.error("Deletion error:", error);
       alert(error instanceof Error ? error.message : "Error deleting asset");
@@ -228,6 +284,15 @@ export default function AdminMedia() {
           <p className="text-gray-500 font-medium">Manage and upload assets for your products</p>
         </div>
         <div className="flex flex-wrap gap-3">
+          <button 
+            onClick={handleDeleteAll}
+            disabled={loading || assets.length === 0}
+            className="flex items-center justify-center space-x-2 bg-red-50 text-red-600 px-6 py-3 rounded-2xl font-bold hover:bg-red-100 transition-all disabled:opacity-50"
+            title="Delete all media"
+          >
+            <Trash2 size={20} />
+            <span className="hidden sm:inline">Delete All</span>
+          </button>
           <button 
             onClick={handleRefresh}
             className="flex items-center justify-center space-x-2 bg-gray-100 text-gray-600 px-6 py-3 rounded-2xl font-bold hover:bg-gray-200 transition-all"

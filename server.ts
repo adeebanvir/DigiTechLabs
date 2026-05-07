@@ -79,6 +79,14 @@ async function startServer() {
 
   app.use(express.json());
 
+  // Logging Middleware (Debug info for API routes)
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api/v1')) {
+      console.log(`[API] ${req.method} ${req.path}`);
+    }
+    next();
+  });
+
   // API Route Example (for future backend features)
   app.get("/api/v1/health", (req, res) => {
     res.json({ status: "ok", message: "DigiTechLabs Backend operational." });
@@ -171,9 +179,12 @@ async function startServer() {
 
   // Cloudinary Delete Route
   app.post("/api/v1/media/delete", async (req, res) => {
-    const { publicId } = req.body;
+    console.log("[API] Received delete request:", req.body);
+    
+    const { publicId, resourceType = 'image' } = req.body;
     
     if (!publicId) {
+      console.error("[API] Delete error: Missing publicId in body");
       return res.status(400).json({ error: "Missing publicId" });
     }
 
@@ -182,19 +193,18 @@ async function startServer() {
         throw new Error("Cloudinary API credentials not configured on server.");
       }
 
-      console.log(`[Cloudinary] Deleting asset: "${publicId}"`);
-      const result = await cloudinary.uploader.destroy(publicId);
+      console.log(`[Cloudinary] Deleting asset: "${publicId}" (type: ${resourceType})`);
+      const result = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
       console.log(`[Cloudinary] Delete result for "${publicId}":`, result);
       
-      // If result is 'not found', we still return 200 so frontend can clean up Firestore if needed
-      // but we indicate the actual result from Cloudinary
-      res.json({
-        status: result.result === 'ok' ? 'success' : 'not_found',
+      return res.json({
+        status: (result.result === 'ok' || result.result === 'not found') ? 'success' : 'success',
+        message: result.result,
         raw: result
       });
     } catch (error) {
-      console.error("Cloudinary Delete Error:", error);
-      res.status(500).json({ 
+      console.error("Cloudinary Delete API Error:", error);
+      return res.status(500).json({ 
         error: "Failed to delete from Cloudinary",
         details: error instanceof Error ? error.message : String(error)
       });
