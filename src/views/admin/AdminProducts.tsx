@@ -41,7 +41,7 @@ export default function AdminProducts() {
   }
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to decommission this technology SKU?")) {
+    if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         await deleteDoc(doc(db, 'products', id));
         fetchProducts();
@@ -68,7 +68,7 @@ export default function AdminProducts() {
           className="bg-[#00A650] text-white px-6 py-3 rounded-2xl font-bold flex items-center justify-center hover:bg-[#008a42] transition-all shadow-lg shadow-[#00A650]/20"
         >
           <Plus size={20} className="mr-2" />
-          Add Innovation
+          Add Product
         </button>
       </div>
 
@@ -95,11 +95,11 @@ export default function AdminProducts() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto scrollbar-hide">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Innovation</th>
+                <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Product</th>
                 <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Category</th>
                 <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Pricing</th>
                 <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Stock Status</th>
@@ -176,7 +176,7 @@ export default function AdminProducts() {
                 <tr>
                     <td colSpan={6} className="px-8 py-20 text-center">
                         <Package size={48} className="mx-auto text-gray-200 mb-4" />
-                        <p className="text-gray-500 font-medium">No results matched your ecosystem query.</p>
+                        <p className="text-gray-500 font-medium">No results matched your product search.</p>
                     </td>
                 </tr>
               )}
@@ -186,7 +186,7 @@ export default function AdminProducts() {
 
         <div className="p-8 border-t border-gray-50 flex items-center justify-between">
             <p className="text-xs font-medium text-gray-400">
-                Showing <span className="font-bold text-[#141414]">{filteredProducts.length}</span> of <span className="font-bold text-[#141414]">{products.length}</span> technological assets
+                Showing <span className="font-bold text-[#141414]">{filteredProducts.length}</span> of <span className="font-bold text-[#141414]">{products.length}</span> total products
             </p>
             <div className="flex items-center space-x-2">
                 <button className="p-2 rounded-xl border border-gray-100 text-gray-400 hover:text-[#141414] disabled:opacity-50">

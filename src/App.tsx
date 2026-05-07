@@ -20,6 +20,8 @@ import AdminOverview from './views/admin/AdminOverview';
 import AdminProducts from './views/admin/AdminProducts';
 import AdminOrders from './views/admin/AdminOrders';
 import AdminUsers from './views/admin/AdminUsers';
+import AdminCategories from './views/admin/AdminCategories';
+import AdminInventory from './views/admin/AdminInventory';
 
 // Admin Auth Guard
 const AdminRoute = ({ children }: { children: any }) => {
@@ -44,29 +46,40 @@ export default function App() {
       <AuthProvider>
         <CartProvider>
           <ScrollToTop />
-          <div className="min-h-screen flex flex-col font-sans bg-white selection:bg-[#00A650]/30 transition-colors duration-300">
-            <Navbar />
-            <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                
-                {/* Admin Ecosystem */}
-                <Route path="/admin" element={<AdminRoute><AdminLayout><AdminOverview /></AdminLayout></AdminRoute>} />
-                <Route path="/admin/products" element={<AdminRoute><AdminLayout><AdminProducts /></AdminLayout></AdminRoute>} />
-                <Route path="/admin/orders" element={<AdminRoute><AdminLayout><AdminOrders /></AdminLayout></AdminRoute>} />
-                <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
+          <AppContent />
         </CartProvider>
       </AuthProvider>
     </Router>
+  );
+}
+
+function AppContent() {
+  const { pathname } = useLocation();
+  const isAdminPath = pathname.startsWith('/admin');
+
+  return (
+    <div className={`min-h-screen flex flex-col font-sans bg-white selection:bg-[#00A650]/30 transition-colors duration-300 ${isAdminPath ? 'overflow-hidden h-screen' : ''}`}>
+      {!isAdminPath && <Navbar />}
+      <main className={isAdminPath ? "h-full overflow-hidden" : "flex-grow"}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          
+          {/* Admin Ecosystem */}
+          <Route path="/admin" element={<AdminRoute><AdminLayout><AdminOverview /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/products" element={<AdminRoute><AdminLayout><AdminProducts /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/categories" element={<AdminRoute><AdminLayout><AdminCategories /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/inventory" element={<AdminRoute><AdminLayout><AdminInventory /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/orders" element={<AdminRoute><AdminLayout><AdminOrders /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
+        </Routes>
+      </main>
+      {!isAdminPath && <Footer />}
+    </div>
   );
 }
 

@@ -87,7 +87,7 @@ export default function AdminUsers() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto scrollbar-hide">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-gray-50/50">

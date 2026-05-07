@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { db } from '../../lib/firebase';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { 
   LayoutDashboard, 
   Package, 
   ShoppingBag, 
   Users, 
   Tag, 
-  MessageSquare, 
-  Settings, 
   Bell, 
   Search,
   Menu,
   X,
-  CreditCard,
   Truck,
-  PieChart,
-  LogOut
+  LogOut,
+  Info
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
@@ -62,14 +61,33 @@ const SidebarItem = ({ to, icon, label, badge, onClick }: SidebarItemProps) => {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [recentNotifications, setRecentNotifications] = useState<any[]>([]);
   const { user, logout } = useAuth();
+
+  useEffect(() => {
+    // Listen for new pending orders as "notifications"
+    const q = query(collection(db, 'orders'), where('status', '==', 'pending'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setUnreadCount(snapshot.size);
+      setRecentNotifications(snapshot.docs.map(doc => ({
+        id: doc.id,
+        type: 'order',
+        title: 'New Order Received',
+        description: `Order #${doc.id.slice(-6).toUpperCase()} is awaiting processing.`,
+        time: 'Just now'
+      })));
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const menuGroups = [
     {
       title: 'Main',
       items: [
         { to: '/admin', icon: <LayoutDashboard size={20} />, label: 'Overview' },
-        { to: '/admin/analytics', icon: <PieChart size={20} />, label: 'Analytics' },
       ]
     },
     {
@@ -81,33 +99,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       ]
     },
     {
-      title: 'Sales',
+      title: 'Operations',
       items: [
-        { to: '/admin/orders', icon: <ShoppingBag size={20} />, label: 'Orders', badge: '12' },
-        { to: '/admin/payments', icon: <CreditCard size={20} />, label: 'Payments' },
-        { to: '/admin/coupons', icon: <Tag size={20} />, label: 'Coupons' },
-      ]
-    },
-    {
-      title: 'Customers',
-      items: [
+        { to: '/admin/orders', icon: <ShoppingBag size={20} />, label: 'Orders', badge: unreadCount > 0 ? unreadCount.toString() : undefined },
         { to: '/admin/users', icon: <Users size={20} />, label: 'Users' },
-        { to: '/admin/reviews', icon: <MessageSquare size={20} />, label: 'Reviews', badge: '5' },
-        { to: '/admin/support', icon: <Bell size={20} />, label: 'Support' },
-      ]
-    },
-    {
-      title: 'System',
-      items: [
-        { to: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
       ]
     }
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden pt-20">
+    <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
       {/* Sidebar Desktop */}
-      <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-gray-100 p-6 overflow-y-auto">
+      <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-gray-100 p-6 overflow-y-auto scrollbar-hide">
         <div className="flex items-center space-x-3 mb-10 px-2">
           <div className="w-10 h-10 bg-[#141414] rounded-xl flex items-center justify-center text-white">
             <LayoutDashboard size={24} />
@@ -157,12 +160,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
+            transition={{ type: 'tween', ease: 'easeInOut', duration: 0.3 }}
             className="fixed inset-0 z-50 lg:hidden flex"
           >
-            <div className="w-72 bg-white h-full p-6 shadow-2xl relative overflow-y-auto pt-20">
+            <div className="w-72 bg-white h-full p-6 shadow-2xl relative overflow-y-auto scrollbar-hide">
               <button 
                 onClick={() => setSidebarOpen(false)}
-                className="absolute top-24 right-6 p-2 text-gray-500"
+                className="absolute top-6 right-6 p-2 text-gray-500"
               >
                 <X />
               </button>
@@ -211,16 +215,70 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Search size={18} className="text-gray-400 group-focus-within:text-[#00A650]" />
             <input 
               type="text" 
-              placeholder="Search ecosystem..." 
+              placeholder="Search dashboard..." 
               className="bg-transparent border-none outline-none ml-3 text-sm font-medium w-full"
             />
           </div>
 
           <div className="flex items-center space-x-6">
-            <button className="relative p-2 text-gray-500 hover:text-[#00A650] transition-colors">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-[#00A650] rounded-full border-2 border-white" />
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2 text-gray-500 hover:text-[#00A650] transition-colors"
+              >
+                <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 text-white text-[8px] font-bold flex items-center justify-center rounded-full border-2 border-white">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              <AnimatePresence>
+                {showNotifications && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)} />
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-2xl border border-gray-100 z-50 p-6 overflow-hidden"
+                    >
+                      <div className="flex justify-between items-center mb-6">
+                        <h3 className="font-bold text-[#141414]">Notifications</h3>
+                        <span className="text-[10px] font-bold text-[#00A650] uppercase tracking-widest">{unreadCount} New</span>
+                      </div>
+                      
+                      <div className="space-y-4 max-h-[400px] overflow-y-auto scrollbar-hide pr-2">
+                        {recentNotifications.length > 0 ? recentNotifications.map((note) => (
+                          <div key={note.id} className="flex space-x-4 p-3 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#00A650] shadow-sm">
+                              <ShoppingBag size={18} />
+                            </div>
+                            <div className="flex-grow">
+                              <p className="text-xs font-bold text-[#141414]">{note.title}</p>
+                              <p className="text-[10px] text-gray-500 leading-tight mt-1">{note.description}</p>
+                              <p className="text-[8px] text-[#00A650] font-bold uppercase mt-1.5 tracking-tighter">{note.time}</p>
+                            </div>
+                          </div>
+                        )) : (
+                          <div className="text-center py-10">
+                            <Info size={40} className="mx-auto text-gray-100 mb-4" />
+                            <p className="text-gray-400 text-xs italic">System status stable. No new alerts.</p>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {recentNotifications.length > 0 && (
+                        <button className="w-full mt-6 py-3 bg-gray-50 rounded-xl text-[10px] font-bold text-gray-500 uppercase tracking-widest hover:bg-gray-100 transition-colors">
+                          View All Activity
+                        </button>
+                      )}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
             <div className="flex items-center space-x-3">
               <div className="text-right hidden sm:block">
                 <p className="text-xs font-bold text-[#141414]">{user?.displayName}</p>
@@ -233,7 +291,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        <main className="flex-grow overflow-y-auto p-4 sm:p-8 custom-scrollbar">
+        <main className="flex-grow overflow-y-auto p-4 sm:p-8 scrollbar-hide">
           {children}
         </main>
       </div>

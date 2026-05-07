@@ -64,34 +64,83 @@ const StatCard = ({ title, value, change, isPositive, icon, color }: StatCardPro
 );
 
 export default function AdminOverview() {
-  const [stats, setStats] = useState({ products: 0, users: 0, orders: 0 });
+  const [stats, setStats] = useState({ products: 0, users: 0, orders: 0, revenue: 0, conversion: '3.2%' });
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<any[]>(data);
   const [isSeeding, setIsSeeding] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchStats();
   }, []);
 
   async function fetchStats() {
+    setLoading(true);
     try {
       const pSnap = await getDocs(collection(db, 'products'));
       const uSnap = await getDocs(collection(db, 'users'));
-      const oSnap = await getDocs(query(collection(db, 'orders'), orderBy('createdAt', 'desc'), limit(5)));
+      const oSnapAll = await getDocs(collection(db, 'orders'));
+      const oSnapRecent = await getDocs(query(collection(db, 'orders'), orderBy('createdAt', 'desc'), limit(5)));
       
+      const allOrders = oSnapAll.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const totalRevenue = allOrders.reduce((sum: number, order: any) => sum + (order.total || 0), 0);
+      const activeOrders = allOrders.filter((o: any) => o.status === 'pending' || o.status === 'processing').length;
+      
+      // Calculate Chart Data (Simplified logic for last 7 days)
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const last7Days = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        return { 
+          name: days[d.getDay()], 
+          revenue: 0, 
+          orders: 0,
+          date: d.toISOString().split('T')[0]
+        };
+      }).reverse();
+
+      allOrders.forEach((order: any) => {
+        if (!order.createdAt) return;
+        const orderDate = order.createdAt.toDate ? order.createdAt.toDate().toISOString().split('T')[0] : '';
+        const dayMatch = last7Days.find(d => d.date === orderDate);
+        if (dayMatch) {
+          dayMatch.revenue += (order.total || 0);
+          dayMatch.orders += 1;
+        }
+      });
+
+      setChartData(last7Days);
       setStats({
         products: pSnap.size,
         users: uSnap.size,
-        orders: oSnap.size
+        orders: activeOrders,
+        revenue: totalRevenue,
+        conversion: uSnap.size > 0 ? ((oSnapAll.size / uSnap.size) * 100).toFixed(1) + '%' : '0%'
       });
-      setRecentActivity(oSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setRecentActivity(oSnapRecent.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (error) {
       console.error("Error fetching stats:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
   const seedEcosystem = async () => {
     setIsSeeding(true);
     try {
+      // Seed Categories first
+      const categories = [...new Set(PRODUCTS.map(p => p.category))];
+      for (const cat of categories) {
+        const slug = cat.toLowerCase().replace(/\s+/g, '-');
+        await setDoc(doc(db, 'categories', slug), {
+          name: cat,
+          slug,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+
+      // Seed Products
       for (const product of PRODUCTS) {
         await setDoc(doc(db, 'products', product.id), {
           ...product,
@@ -101,7 +150,7 @@ export default function AdminOverview() {
           updatedAt: serverTimestamp(),
         });
       }
-      alert("Technological ecosystem initialized.");
+      alert("Store architecture initialized and assets deployed.");
       fetchStats();
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, 'products');
@@ -110,11 +159,20 @@ export default function AdminOverview() {
     }
   };
 
+  if (loading && stats.products === 0) {
+    return (
+        <div className="h-[60vh] flex flex-col items-center justify-center space-y-4">
+            <Loader2 className="animate-spin text-[#00A650]" size={40} />
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Accessing Intelligence Module...</p>
+        </div>
+    );
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#141414] tracking-tight">Ecosystem Intelligence</h1>
+          <h1 className="text-3xl font-bold text-[#141414] tracking-tight">Enterprise Intelligence</h1>
           <p className="text-gray-500 font-medium">Real-time performance metrics and business health.</p>
         </div>
         <div className="flex items-center space-x-3">
@@ -124,10 +182,10 @@ export default function AdminOverview() {
                 className="flex items-center space-x-2 bg-white border border-gray-100 text-xs font-bold text-[#141414] px-4 py-2 rounded-xl hover:bg-gray-50 transition-all uppercase tracking-widest"
             >
                 {isSeeding ? <Loader2 size={14} className="animate-spin" /> : <Database size={14} />}
-                <span>Initialize Ecosystem</span>
+                <span>Initialize Store</span>
             </button>
             <button className="bg-[#141414] text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#00A650] transition-colors">
-                Export Data
+                Export Ledger
             </button>
         </div>
       </div>
@@ -135,7 +193,7 @@ export default function AdminOverview() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
           title="Total Revenue" 
-          value="$128,430" 
+          value={`$${stats.revenue.toLocaleString()}`} 
           change="+12.5%" 
           isPositive={true}
           icon={<TrendingUp size={20} />}
@@ -150,15 +208,15 @@ export default function AdminOverview() {
           color="bg-blue-500"
         />
         <StatCard 
-          title="Conversion Rate" 
-          value="3.24%" 
+          title="Conversion" 
+          value={stats.conversion} 
           change="-0.8%" 
           isPositive={false}
           icon={<Activity size={20} />}
           color="bg-purple-500"
         />
         <StatCard 
-          title="Inventory Items" 
+          title="Inventory SKUs" 
           value={stats.products} 
           change="+18" 
           isPositive={true}
@@ -171,15 +229,15 @@ export default function AdminOverview() {
         {/* Revenue Chart */}
         <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-bold text-[#141414]">Revenue Streams</h3>
+            <h3 className="text-xl font-bold text-[#141414]">Monetary Flow</h3>
             <select className="bg-gray-50 border-none rounded-xl text-xs font-bold px-3 py-2 outline-none">
-                <option>Weekly View</option>
-                <option>Monthly View</option>
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
             </select>
           </div>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data}>
+              <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#00A650" stopOpacity={0.1}/>
@@ -240,8 +298,8 @@ export default function AdminOverview() {
               </div>
             )}
           </div>
-          <button className="w-full mt-10 py-3 rounded-xl border border-gray-100 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors">
-            View All Ecosystem Activity
+            <button className="w-full mt-10 py-3 rounded-xl border border-gray-100 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors">
+            View All Activity
           </button>
         </div>
       </div>
