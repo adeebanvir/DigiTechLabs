@@ -50,35 +50,49 @@
     },
     "Order": {
       "title": "Order",
-      "description": "Customer purchase transaction record.",
+      "description": "Customer purchase transaction record with full tracking.",
       "type": "object",
       "properties": {
         "orderId": { "type": "string" },
         "userId": { "type": "string" },
-        "status": { "type": "string", "enum": ["pending", "paid", "processing", "shipped", "delivered", "cancelled"] },
+        "customerName": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "paid", "processing", "shipped", "delivered", "cancelled", "refunded"] },
+        "paymentStatus": { "type": "string", "enum": ["pending", "completed", "failed", "refunded"] },
         "items": { "type": "array" },
         "total": { "type": "number" },
-        "shippingAddress": { "type": "object" },
-        "paymentId": { "type": "string" },
+        "shippingAddress": { "type": "string" },
+        "trackingCode": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "status", "items", "total"]
     },
-    "Review": {
-      "title": "Product Review",
-      "description": "Customer feedback on a product.",
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Promotional discounts.",
       "type": "object",
       "properties": {
-        "reviewId": { "type": "string" },
-        "productId": { "type": "string" },
-        "userId": { "type": "string" },
-        "rating": { "type": "number" },
-        "comment": { "type": "string" },
-        "userName": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "code": { "type": "string" },
+        "discountType": { "type": "string", "enum": ["percentage", "fixed"] },
+        "value": { "type": "number" },
+        "expiryDate": { "type": "string", "format": "date-time" },
+        "usageCount": { "type": "number" },
+        "isActive": { "type": "boolean" }
       },
-      "required": ["productId", "userId", "rating"]
+      "required": ["code", "discountType", "value"]
+    },
+    "Ticket": {
+      "title": "Support Ticket",
+      "description": "Customer support inquiries.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "subject": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["open", "in-progress", "resolved", "closed"] },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
     }
   },
   "firestore": {
@@ -97,6 +111,14 @@
     "orders/{orderId}": {
       "schema": "Order",
       "description": "Customer orders and payment statuses."
+    },
+    "coupons/{couponId}": {
+      "schema": "Coupon",
+      "description": "Promotional codes."
+    },
+    "tickets/{ticketId}": {
+      "schema": "Ticket",
+      "description": "Customer support messages."
     },
     "products/{productId}/reviews/{reviewId}": {
       "schema": "Review",

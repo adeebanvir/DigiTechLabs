@@ -60,7 +60,7 @@ service cloud.firestore {
       return data.userId == request.auth.uid &&
              data.items is list && data.items.size() > 0 && data.items.size() <= 50 &&
              data.total is number && data.total >= 0 &&
-             data.status in ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled'];
+             data.status in ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
     }
 
     function isValidReview(data) {
@@ -79,7 +79,7 @@ service cloud.firestore {
       allow create: if isOwner(userId) && isValidUser(incoming()) && isValidId(userId);
       allow update: if (isOwner(userId) || isAdmin()) && 
                     isValidUser(incoming()) &&
-                    incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'updatedAt']) &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'updatedAt', 'status']) &&
                     incoming().updatedAt == request.time;
     }
 
@@ -109,10 +109,23 @@ service cloud.firestore {
       }
     }
 
-    // CATEGORIES
+    // CATEGORIES & COUPONS
     match /categories/{categoryId} {
       allow read: if true;
       allow write: if isAdmin() && isValidId(categoryId);
+    }
+
+    match /coupons/{couponId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() && isValidId(couponId);
+    }
+
+    // TICKETS
+    match /tickets/{ticketId} {
+      allow get: if isOwner(existing().userId) || isAdmin();
+      allow list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid && isValidId(ticketId);
+      allow update: if isAdmin() || (isOwner(existing().userId) && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'message']));
     }
 
     // ORDERS (Pillar 8: Secure list queries)

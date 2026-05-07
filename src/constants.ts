@@ -25,7 +25,9 @@ export const PRODUCTS: Product[] = [
       'Weight': '250g'
     },
     isBestSeller: true,
-    stock: 15
+    stock: 15,
+    status: 'published',
+    sku: 'DTL-ACX1'
   },
   {
     id: 'dtl-002',
@@ -51,7 +53,9 @@ export const PRODUCTS: Product[] = [
       'Storage': '32GB'
     },
     isNew: true,
-    stock: 24
+    stock: 24,
+    status: 'published',
+    sku: 'DTL-LWS4'
   },
   {
     id: 'dtl-003',
@@ -76,7 +80,9 @@ export const PRODUCTS: Product[] = [
       'Battery': '4500mAh',
       'Camera': '50MP + 12MP + 12MP'
     },
-    stock: 9
+    stock: 9,
+    status: 'published',
+    sku: 'DTL-ZP12'
   },
   {
     id: 'dtl-004',
@@ -101,6 +107,8 @@ export const PRODUCTS: Product[] = [
       'Dimensions': '10cm x 10cm x 0.8cm',
       'Weight': '85g'
     },
-    stock: 50
+    stock: 50,
+    status: 'published',
+    sku: 'DTL-NCP1'
   }
 ];

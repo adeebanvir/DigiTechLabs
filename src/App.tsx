@@ -14,8 +14,20 @@ import Cart from './views/Cart';
 import About from './views/About';
 import Contact from './views/Contact';
 import { CartProvider } from './context/CartContext';
-import { AuthProvider } from './context/AuthContext';
-import Admin from './views/Admin';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import AdminLayout from './components/admin/AdminLayout';
+import AdminOverview from './views/admin/AdminOverview';
+import AdminProducts from './views/admin/AdminProducts';
+import AdminOrders from './views/admin/AdminOrders';
+import AdminUsers from './views/admin/AdminUsers';
+
+// Admin Auth Guard
+const AdminRoute = ({ children }: { children: any }) => {
+  const { isAdmin, loading } = useAuth();
+  if (loading) return <div className="h-screen flex items-center justify-center font-bold uppercase tracking-widest text-[#00A650]">Verifying Security...</div>;
+  if (!isAdmin) return <div className="h-screen flex items-center justify-center font-bold text-red-500">Access Restricted.</div>;
+  return <>{children}</>;
+};
 
 // Scroll to top on navigation component
 function ScrollToTop() {
@@ -42,7 +54,12 @@ export default function App() {
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/admin" element={<Admin />} />
+                
+                {/* Admin Ecosystem */}
+                <Route path="/admin" element={<AdminRoute><AdminLayout><AdminOverview /></AdminLayout></AdminRoute>} />
+                <Route path="/admin/products" element={<AdminRoute><AdminLayout><AdminProducts /></AdminLayout></AdminRoute>} />
+                <Route path="/admin/orders" element={<AdminRoute><AdminLayout><AdminOrders /></AdminLayout></AdminRoute>} />
+                <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
               </Routes>
             </main>
             <Footer />
