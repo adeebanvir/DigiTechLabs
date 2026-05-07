@@ -67,13 +67,13 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="relative"
+              className="relative flex justify-center"
             >
-              <div className="absolute inset-0 bg-[#00A650]/10 rounded-[4rem] blur-3xl -z-10 transform scale-90 translate-x-10 translate-y-10" />
+              <div className="absolute inset-0 bg-[#00A650]/10 rounded-[4rem] blur-3xl -z-10 transform scale-75 translate-x-10 translate-y-10" />
               <img 
                 src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=1000" 
                 alt="Featured Gadget"
-                className="w-full h-auto rounded-[3rem] shadow-2xl"
+                className="w-[80%] h-auto rounded-[3rem] shadow-2xl"
                 referrerPolicy="no-referrer"
               />
             </motion.div>
@@ -110,7 +110,7 @@ export default function Home() {
       {/* Featured Products */}
       <section className="py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-4 md:gap-8 text-left">
             <div className="max-w-2xl">
               <span className="text-[#00A650] text-[11px] font-bold uppercase tracking-widest mb-4 block">
                 Curation Excellence
@@ -119,12 +119,12 @@ export default function Home() {
                 Trending <br /> Collections.
               </h2>
             </div>
-            <Link to="/shop" className="text-[#00A650] font-bold hover:underline flex items-center">
+            <Link to="/shop" className="text-[#00A650] font-bold hover:underline flex items-center justify-start">
               View all products <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-8">
             {loading ? (
               <div className="col-span-full py-12 flex flex-col items-center justify-center text-gray-400">
                 <Loader2 className="w-10 h-10 animate-spin mb-4" />

@@ -37,7 +37,11 @@ export default function AdminUsers() {
   }
 
   const toggleUserStatus = async (userId: string, currentStatus: string) => {
-    const newStatus = currentStatus === 'active' ? 'suspended' : 'active';
+    const isSuspended = currentStatus === 'suspended';
+    const action = isSuspended ? 'restore access' : 'instantly ban this citizen';
+    if (!window.confirm(`SECURITY ALERT: Are you sure you want to ${action}?`)) return;
+    
+    const newStatus = isSuspended ? 'active' : 'suspended';
     try {
       await updateDoc(doc(db, 'users', userId), {
         status: newStatus,
@@ -141,9 +145,9 @@ export default function AdminUsers() {
                   </td>
                   <td className="px-8 py-6">
                     <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-                      user.status === 'active' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                      user.status === 'suspended' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-600'
                     }`}>
-                        {user.status || 'Active'}
+                        {user.status === 'suspended' ? 'BANNED' : 'ACTIVE ACCESS'}
                     </span>
                   </td>
                   <td className="px-8 py-6">

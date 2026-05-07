@@ -34,6 +34,7 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [editingOrder, setEditingOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -64,12 +65,33 @@ export default function AdminOrders() {
     }
   };
 
-  const deleteOrder = async (orderId: string) => {
-    if (!window.confirm("Are you sure you want to remove this order from history? This cannot be undone.")) return;
+  const handleEditOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingOrder) return;
     try {
-      await deleteDoc(doc(db, 'orders', orderId));
-      setOrders(prev => prev.filter(o => o.id !== orderId));
+      await updateDoc(doc(db, 'orders', editingOrder.id), {
+        customerName: editingOrder.customerName,
+        shippingAddress: editingOrder.shippingAddress,
+        email: editingOrder.email,
+        phone: editingOrder.phone,
+        status: editingOrder.status,
+        updatedAt: new Date()
+      });
+      setEditingOrder(null);
+      fetchOrders();
     } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `orders/${editingOrder.id}`);
+    }
+  };
+
+  const deleteOrder = async (orderId: string) => {
+    if (!window.confirm("CRITICAL: This will permanently remove this transaction from the ledger. Proceed?")) return;
+    try {
+      setOrders(prev => prev.filter(o => o.id !== orderId)); // Optimistic UI
+      await deleteDoc(doc(db, 'orders', orderId));
+      if (selectedOrder?.id === orderId) setSelectedOrder(null);
+    } catch (error) {
+      fetchOrders(); // Rollback on error
       handleFirestoreError(error, OperationType.DELETE, `orders/${orderId}`);
     }
   };
@@ -210,10 +232,13 @@ export default function AdminOrders() {
                 return (
                   <tr key={order.id} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="px-8 py-6">
-                      <div>
-                        <p className="font-bold text-[#141414]">#{order.id.slice(-8).toUpperCase()}</p>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
-                            {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : 'N/A'}
+                      <div className="flex flex-col">
+                        <div className="flex items-center space-x-2">
+                           <div className="w-1.5 h-1.5 rounded-full bg-[#00A650]" />
+                           <p className="font-mono text-sm font-bold text-[#141414]">ID: {order.id.slice(-8).toUpperCase()}</p>
+                        </div>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.1em] mt-1.5 pl-3.5 border-l border-gray-100">
+                            Recorded: {order.createdAt?.toDate ? order.createdAt.toDate().toLocaleString() : 'N/A'}
                         </p>
                       </div>
                     </td>
@@ -249,6 +274,13 @@ export default function AdminOrders() {
                     </td>
                     <td className="px-8 py-6">
                       <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <button 
+                            onClick={() => setEditingOrder(order)}
+                            className="p-2 text-gray-400 hover:text-[#00A650] hover:bg-gray-50 rounded-lg transition-all" 
+                            title="Edit Order"
+                         >
+                            <Eye size={18} />
+                         </button>
                          <button 
                             onClick={() => generateInvoice(order)}
                             className="p-2 text-gray-400 hover:text-blue-500 hover:bg-gray-50 rounded-lg transition-all" 
@@ -291,6 +323,101 @@ export default function AdminOrders() {
           </table>
         </div>
       </div>
+
+      {/* Edit Order Modal */}
+      {editingOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden"
+          >
+            <div className="p-8 border-b border-gray-100 flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold text-[#141414]">Modify Transaction</h3>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Order #{editingOrder.id.slice(-8).toUpperCase()}</p>
+              </div>
+              <button onClick={() => setEditingOrder(null)} className="text-gray-400 hover:text-[#141414]">
+                <XCircle size={24} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleEditOrder} className="p-8 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-2">Customer Identity</label>
+                  <input 
+                    type="text" 
+                    value={editingOrder.customerName}
+                    onChange={(e) => setEditingOrder({...editingOrder, customerName: e.target.value})}
+                    className="w-full px-4 py-3 bg-gray-50 border-none outline-none rounded-xl font-bold text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-2">Contact Email</label>
+                  <input 
+                    type="email" 
+                    value={editingOrder.email}
+                    onChange={(e) => setEditingOrder({...editingOrder, email: e.target.value})}
+                    className="w-full px-4 py-3 bg-gray-50 border-none outline-none rounded-xl font-bold text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-2">Phone Number</label>
+                  <input 
+                    type="text" 
+                    value={editingOrder.phone}
+                    onChange={(e) => setEditingOrder({...editingOrder, phone: e.target.value})}
+                    className="w-full px-4 py-3 bg-gray-50 border-none outline-none rounded-xl font-bold text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-2">Fulfillment Status</label>
+                  <select 
+                    value={editingOrder.status}
+                    onChange={(e) => setEditingOrder({...editingOrder, status: e.target.value as any})}
+                    className="w-full px-4 py-3 bg-gray-50 border-none outline-none rounded-xl font-bold text-sm"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="paid">Paid</option>
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="refunded">Refunded</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-2">Shipping Destination</label>
+                <textarea 
+                  rows={3}
+                  value={editingOrder.shippingAddress}
+                  onChange={(e) => setEditingOrder({...editingOrder, shippingAddress: e.target.value})}
+                  className="w-full px-4 py-3 bg-gray-50 border-none outline-none rounded-xl font-bold text-sm resize-none"
+                />
+              </div>
+
+              <div className="pt-4 flex space-x-3">
+                <button 
+                  type="button"
+                  onClick={() => setEditingOrder(null)}
+                  className="flex-1 px-6 py-4 bg-gray-50 text-gray-500 font-bold rounded-2xl hover:bg-gray-100 transition-all"
+                >
+                  Discard
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-1 px-6 py-4 bg-[#141414] text-white font-bold rounded-2xl hover:bg-[#00A650] transition-all"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

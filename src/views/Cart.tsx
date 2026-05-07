@@ -223,7 +223,7 @@ export default function Cart() {
                     name="name"
                     type="text" 
                     defaultValue={user?.displayName || ''}
-                    placeholder="Full Name" 
+                    placeholder="Full Name (Required for Identity)" 
                     className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]"
                   />
                   <input 

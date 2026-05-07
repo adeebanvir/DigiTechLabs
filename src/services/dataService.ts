@@ -136,12 +136,12 @@ export const orderService = {
     try {
       const orderData = {
         userId,
-        customerName,
-        email,
-        phone,
+        customerName: customerName.trim() || 'Guest Customer',
+        email: email.trim() || 'N/A',
+        phone: phone.trim() || 'N/A',
         items,
         total,
-        shippingAddress: address,
+        shippingAddress: address.trim() || 'N/A',
         status: 'pending',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()

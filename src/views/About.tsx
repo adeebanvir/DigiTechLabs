@@ -20,12 +20,12 @@ export default function About() {
       {/* Story */}
       <section className="bg-[#141414] py-24 text-white overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-          <div className="relative">
+          <div className="relative flex justify-center">
             <div className="absolute inset-0 bg-[#00A650] blur-[120px] opacity-20 -z-10" />
             <img 
               src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1000" 
               alt="Lab Engineering"
-              className="rounded-[3rem] shadow-2xl"
+              className="w-[90%] lg:w-full h-auto rounded-[3rem] shadow-2xl"
               referrerPolicy="no-referrer"
             />
           </div>

@@ -202,6 +202,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   </div>
                 ))}
               </nav>
+
+              <div className="mt-10 pt-6 border-t border-gray-100 space-y-2">
+                <Link 
+                  to="/"
+                  onClick={() => setSidebarOpen(false)}
+                  className="flex items-center space-x-3 w-full px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-xl transition-all"
+                >
+                  <Store size={20} />
+                  <span className="font-bold text-sm">Exit Dashboard</span>
+                </Link>
+                <button 
+                  onClick={() => { logout(); setSidebarOpen(false); }}
+                  className="flex items-center space-x-3 w-full px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                >
+                  <LogOut size={20} />
+                  <span className="font-bold text-sm">System Logout</span>
+                </button>
+              </div>
             </div>
             <div 
               className="flex-grow bg-[#141414]/20 backdrop-blur-sm" 

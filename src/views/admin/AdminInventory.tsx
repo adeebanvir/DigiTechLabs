@@ -175,7 +175,7 @@ export default function AdminInventory() {
                   </td>
                   <td className="px-8 py-6">
                     <div className="flex items-center space-x-4">
-                      <div className="flex items-center bg-gray-50 rounded-xl border border-gray-100 p-1">
+                      <div className="flex items-center bg-gray-50 rounded-xl border border-gray-100 p-1 group/input">
                         <button 
                           disabled={updatingId === product.id}
                           onClick={() => updateStock(product.id, product.stock, -1)}
@@ -183,7 +183,25 @@ export default function AdminInventory() {
                         >
                           -
                         </button>
-                        <span className="w-10 text-center text-xs font-bold">{product.stock}</span>
+                        <input 
+                          type="number"
+                          defaultValue={product.stock}
+                          onBlur={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (!isNaN(val) && val !== product.stock) {
+                              updateStock(product.id, val, 0);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              const val = parseInt((e.target as HTMLInputElement).value);
+                              if (!isNaN(val) && val !== product.stock) {
+                                updateStock(product.id, val, 0);
+                              }
+                            }
+                          }}
+                          className="w-16 text-center text-xs font-bold bg-transparent border-none outline-none focus:text-[#00A650]"
+                        />
                         <button 
                           disabled={updatingId === product.id}
                           onClick={() => updateStock(product.id, product.stock, 1)}
