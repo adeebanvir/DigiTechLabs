@@ -15,6 +15,7 @@ import About from './views/About';
 import Contact from './views/Contact';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminOverview from './views/admin/AdminOverview';
 import AdminProducts from './views/admin/AdminProducts';
@@ -22,6 +23,7 @@ import AdminOrders from './views/admin/AdminOrders';
 import AdminUsers from './views/admin/AdminUsers';
 import AdminCategories from './views/admin/AdminCategories';
 import AdminInventory from './views/admin/AdminInventory';
+import AdminMedia from './views/admin/AdminMedia';
 
 // Admin Auth Guard
 const AdminRoute = ({ children }: { children: any }) => {
@@ -43,12 +45,14 @@ function ScrollToTop() {
 export default function App() {
   return (
     <Router>
-      <AuthProvider>
-        <CartProvider>
-          <ScrollToTop />
-          <AppContent />
-        </CartProvider>
-      </AuthProvider>
+      <ErrorBoundary>
+        <AuthProvider>
+          <CartProvider>
+            <ScrollToTop />
+            <AppContent />
+          </CartProvider>
+        </AuthProvider>
+      </ErrorBoundary>
     </Router>
   );
 }
@@ -76,6 +80,7 @@ function AppContent() {
           <Route path="/admin/inventory" element={<AdminRoute><AdminLayout><AdminInventory /></AdminLayout></AdminRoute>} />
           <Route path="/admin/orders" element={<AdminRoute><AdminLayout><AdminOrders /></AdminLayout></AdminRoute>} />
           <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/media" element={<AdminRoute><AdminLayout><AdminMedia /></AdminLayout></AdminRoute>} />
         </Routes>
       </main>
       {!isAdminPath && <Footer />}

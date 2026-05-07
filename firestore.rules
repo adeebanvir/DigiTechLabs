@@ -73,6 +73,15 @@ service cloud.firestore {
              data.comment is string && data.comment.size() <= 2000;
     }
 
+    function isValidMedia(data) {
+      return data.url is string && data.url.size() <= 1000 &&
+             data.publicId is string && data.publicId.size() <= 255 &&
+             data.fileName is string && data.fileName.size() <= 255 &&
+             data.fileSize is number &&
+             data.fileType is string && data.fileType.size() <= 100 &&
+             data.uploadedBy == request.auth.uid;
+    }
+
     // --- COLLECTION RULES ---
 
     // USERS (Pillar 6: PII isolation implicitly handled by isOwner/isAdmin)
@@ -155,6 +164,16 @@ service cloud.firestore {
           incoming().updatedAt == request.time
         )
       );
+    }
+
+    // MEDIA ASSETS
+    match /media/{mediaId} {
+      allow get: if isAdmin() && isValidId(mediaId);
+      allow list: if isAdmin();
+      allow create: if isAdmin() && isValidId(mediaId) && 
+                      isValidMedia(incoming()) && 
+                      incoming().uploadedAt == request.time;
+      allow delete: if isAdmin() && isValidId(mediaId);
     }
   }
 }

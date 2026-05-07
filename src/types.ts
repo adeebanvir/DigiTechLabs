@@ -50,6 +50,8 @@ export interface Order {
   id: string;
   userId: string;
   customerName: string;
+  email: string;
+  phone: string;
   items: OrderItem[];
   total: number;
   status: 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';

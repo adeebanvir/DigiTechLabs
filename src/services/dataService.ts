@@ -132,13 +132,16 @@ export const categoryService = {
 };
 
 export const orderService = {
-  async createOrder(userId: string, items: any[], total: number, address: string) {
+  async createOrder(userId: string, items: any[], total: number, address: string, email: string, phone: string, customerName: string) {
     try {
       const orderData = {
         userId,
+        customerName,
+        email,
+        phone,
         items,
         total,
-        address,
+        shippingAddress: address,
         status: 'pending',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()

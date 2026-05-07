@@ -13,8 +13,10 @@ import {
   Menu,
   X,
   Truck,
+  Image,
   LogOut,
-  Info
+  Info,
+  Store
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
@@ -103,6 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       items: [
         { to: '/admin/orders', icon: <ShoppingBag size={20} />, label: 'Orders', badge: unreadCount > 0 ? unreadCount.toString() : undefined },
         { to: '/admin/users', icon: <Users size={20} />, label: 'Users' },
+        { to: '/admin/media', icon: <Image size={20} />, label: 'Media' },
       ]
     }
   ];
@@ -142,7 +145,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           ))}
         </nav>
 
-        <div className="mt-10 pt-6 border-t border-gray-100">
+        <div className="mt-10 pt-6 border-t border-gray-100 space-y-2">
+           <Link 
+            to="/"
+            className="flex items-center space-x-3 w-full px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-xl transition-all"
+           >
+            <Store size={20} />
+            <span className="font-bold text-sm">Exit Dashboard</span>
+           </Link>
            <button 
             onClick={logout}
             className="flex items-center space-x-3 w-full px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all"

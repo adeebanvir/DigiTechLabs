@@ -49,6 +49,20 @@ export default function AdminUsers() {
     }
   };
 
+  const toggleAdminRole = async (userId: string, currentRole: string) => {
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+    if (!window.confirm(`Are you sure you want to change this user's role to ${newRole}?`)) return;
+    try {
+      await updateDoc(doc(db, 'users', userId), {
+        role: newRole,
+        updatedAt: new Date()
+      });
+      fetchUsers();
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `users/${userId}`);
+    }
+  };
+
   const filteredUsers = users.filter(u => 
     u.displayName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     u.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -146,14 +160,18 @@ export default function AdminUsers() {
                   <td className="px-8 py-6">
                     <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                          <button 
+                            onClick={() => toggleAdminRole(user.userId, user.role || 'user')}
+                            className={`p-2 rounded-lg transition-all ${user.role === 'admin' ? 'text-blue-500 hover:bg-blue-50' : 'text-[#00A650] hover:bg-green-50'}`}
+                            title={user.role === 'admin' ? 'Demote to User' : 'Promote to Admin'}
+                         >
+                            <Shield size={18} />
+                         </button>
+                         <button 
                             onClick={() => toggleUserStatus(user.userId, user.status || 'active')}
                             className={`p-2 rounded-lg transition-all ${user.status === 'suspended' ? 'text-green-500 hover:bg-green-50' : 'text-red-400 hover:bg-red-50'}`}
                             title={user.status === 'suspended' ? 'Restore Access' : 'Suspend Access'}
                          >
                             <Ban size={18} />
-                         </button>
-                         <button className="p-2 text-gray-400 hover:text-[#141414] hover:bg-gray-50 rounded-lg transition-all">
-                            <MoreHorizontal size={18} />
                          </button>
                     </div>
                   </td>

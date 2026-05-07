@@ -467,15 +467,24 @@ export default function AdminProducts() {
                     <div className="group">
                         <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 ml-1">Display Image (URL)</label>
                         <div className="flex space-x-4">
-                            <div className="flex-grow">
+                            <div className="flex-grow relative group">
                                 <input 
                                     required
                                     type="text" 
-                                    placeholder="https://images.unsplash.com/..." 
+                                    placeholder="https://images.cloudinary.com/..." 
                                     value={formData.image}
                                     onChange={(e) => setFormData({...formData, image: e.target.value})}
-                                    className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#00A650] focus:bg-white rounded-2xl outline-none transition-all font-medium text-sm"
+                                    className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#00A650] focus:bg-white rounded-2xl outline-none transition-all font-medium text-sm pr-12"
                                 />
+                                <a 
+                                  href="/admin/media" 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#00A650] transition-colors"
+                                  title="Browse Media Library"
+                                >
+                                  <ImageIcon size={18} />
+                                </a>
                             </div>
                             <div className="w-14 h-14 rounded-2xl bg-gray-50 border-2 border-dashed border-gray-200 overflow-hidden flex-shrink-0">
                                 {formData.image ? (

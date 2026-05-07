@@ -29,12 +29,18 @@ export default function Cart() {
     try {
       const formData = new FormData(e.currentTarget as HTMLFormElement);
       const address = formData.get('address') as string;
+      const email = formData.get('email') as string;
+      const phone = formData.get('phone') as string;
+      const name = formData.get('name') as string;
       
       await orderService.createOrder(
         user.uid,
         cart.map(item => ({ id: item.id, name: item.name, price: item.price, quantity: item.quantity })),
         grandTotal,
-        address
+        address,
+        email,
+        phone,
+        name
       );
 
       setIsSuccess(true);
@@ -218,6 +224,13 @@ export default function Cart() {
                     type="text" 
                     defaultValue={user?.displayName || ''}
                     placeholder="Full Name" 
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]"
+                  />
+                  <input 
+                    required
+                    name="phone"
+                    type="tel" 
+                    placeholder="Phone Number (Required)" 
                     className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]"
                   />
                   <input 

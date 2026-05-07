@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db, handleFirestoreError, OperationType } from '../../lib/firebase';
-import { collection, getDocs, doc, updateDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, query, orderBy, deleteDoc } from 'firebase/firestore';
 import { Order } from '../../types';
 import { 
   Search, 
@@ -12,7 +12,10 @@ import {
   Truck,
   Download,
   AlertCircle,
-  ShoppingBag
+  ShoppingBag,
+  Trash2,
+  FileText,
+  Printer
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -30,6 +33,7 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -60,9 +64,90 @@ export default function AdminOrders() {
     }
   };
 
+  const deleteOrder = async (orderId: string) => {
+    if (!window.confirm("Are you sure you want to remove this order from history? This cannot be undone.")) return;
+    try {
+      await deleteDoc(doc(db, 'orders', orderId));
+      setOrders(prev => prev.filter(o => o.id !== orderId));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `orders/${orderId}`);
+    }
+  };
+
+  const generateInvoice = (order: Order) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const html = `
+      <html>
+        <head>
+          <title>Invoice - ${order.id}</title>
+          <style>
+            body { font-family: 'Inter', sans-serif; padding: 40px; color: #141414; }
+            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #f0f0f0; padding-bottom: 20px; }
+            .logo { font-size: 24px; font-weight: 900; }
+            .info { display: flex; justify-content: space-between; margin-top: 40px; }
+            .table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+            .table th { text-align: left; background: #f9f9f9; padding: 12px; font-size: 10px; text-transform: uppercase; }
+            .table td { padding: 12px; border-bottom: 1px solid #f0f0f0; }
+            .total { text-align: right; margin-top: 40px; font-size: 20px; font-weight: bold; }
+            .footer { margin-top: 80px; font-size: 10px; color: #888; text-align: center; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo">DIGITECH LABS</div>
+            <div>
+              <p><strong>Invoice ID:</strong> #${order.id.toUpperCase()}</p>
+              <p><strong>Date:</strong> ${order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : new Date().toLocaleDateString()}</p>
+            </div>
+          </div>
+          <div class="info">
+            <div>
+              <p><strong>BILL TO:</strong></p>
+              <p>${order.customerName}</p>
+              <p>${order.email || 'N/A'}</p>
+              <p>${order.phone || 'N/A'}</p>
+            </div>
+            <div style="text-align: right">
+              <p><strong>SHIPPING ADDRESS:</strong></p>
+              <p>${order.shippingAddress || 'Digital Delivery'}</p>
+            </div>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Item Description</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${order.items.map(item => `
+                <tr>
+                  <td>${item.name}</td>
+                  <td>1</td>
+                  <td>$${item.price.toFixed(2)}</td>
+                  <td>$${item.price.toFixed(2)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <div class="total">Total Amount: $${order.total.toFixed(2)}</div>
+          <div class="footer">Thank you for powering the future with DigiTech Labs.</div>
+          <script>window.print();</script>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
+
   const filteredOrders = orders.filter(o => 
     o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    o.customerName?.toLowerCase().includes(searchQuery.toLowerCase())
+    o.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    o.items?.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   return (
@@ -144,7 +229,14 @@ export default function AdminOrders() {
                       </div>
                     </td>
                     <td className="px-8 py-6 text-sm text-gray-500 font-medium">
-                      {order.items?.length || 0} Technology Units
+                      <div className="space-y-1">
+                        {order.items?.map((item, idx) => (
+                           <div key={idx} className="flex items-center text-[10px] bg-gray-50 px-2 py-0.5 rounded-md text-gray-600 font-bold border border-gray-100">
+                             {item.name}
+                           </div>
+                        ))}
+                        {(!order.items || order.items.length === 0) && "No Items"}
+                      </div>
                     </td>
                     <td className="px-8 py-6">
                       <p className="font-bold text-[#141414]">${order.total?.toFixed(2)}</p>
@@ -156,14 +248,18 @@ export default function AdminOrders() {
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                         <button className="p-2 text-gray-400 hover:text-[#00A650] hover:bg-gray-50 rounded-lg transition-all" title="View Details">
-                            <Eye size={18} />
+                      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <button 
+                            onClick={() => generateInvoice(order)}
+                            className="p-2 text-gray-400 hover:text-blue-500 hover:bg-gray-50 rounded-lg transition-all" 
+                            title="Print Invoice"
+                         >
+                            <FileText size={18} />
                          </button>
                          <select 
                             onChange={(e) => updateStatus(order.id, e.target.value)}
                             value={order.status}
-                            className="text-[10px] font-bold uppercase tracking-widest bg-gray-100 border-none rounded-lg p-1 outline-none"
+                            className="text-[10px] font-bold uppercase tracking-widest bg-gray-100 border-none rounded-lg p-1 outline-none mx-1"
                          >
                             <option value="pending">Pending</option>
                             <option value="paid">Paid</option>
@@ -172,6 +268,13 @@ export default function AdminOrders() {
                             <option value="delivered">Delivered</option>
                             <option value="cancelled">Cancelled</option>
                          </select>
+                         <button 
+                            onClick={() => deleteOrder(order.id)}
+                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" 
+                            title="Delete Order"
+                         >
+                            <Trash2 size={18} />
+                         </button>
                       </div>
                     </td>
                   </tr>

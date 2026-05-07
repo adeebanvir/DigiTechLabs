@@ -99,6 +99,21 @@
         "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
         "createdAt": { "type": "string", "format": "date-time" }
       }
+    },
+    "Media": {
+      "title": "Media Asset",
+      "description": "Uploaded images and assets for use across the site.",
+      "type": "object",
+      "properties": {
+        "url": { "type": "string" },
+        "publicId": { "type": "string" },
+        "fileName": { "type": "string" },
+        "fileSize": { "type": "number" },
+        "fileType": { "type": "string" },
+        "uploadedAt": { "type": "string", "format": "date-time" },
+        "uploadedBy": { "type": "string" }
+      },
+      "required": ["url", "publicId"]
     }
   },
   "firestore": {
@@ -125,6 +140,10 @@
     "tickets/{ticketId}": {
       "schema": "Ticket",
       "description": "Customer support messages."
+    },
+    "media/{mediaId}": {
+      "schema": "Media",
+      "description": "Cloudinary asset library."
     },
     "products/{productId}/reviews/{reviewId}": {
       "schema": "Review",
