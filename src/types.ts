@@ -1,12 +1,15 @@
 export interface Product {
   id: string;
+  productId: string; // Used for sorting as requested
   name: string;
   description: string;
   price: number;
+  discount: number; // Applied to price
   category: string;
   image: string;
   rating: number;
   reviews: number;
+  isReviewsEnabled: boolean; // Toggleable reviews
   features: string[];
   specs: Record<string, string>;
   isNew?: boolean;
@@ -15,6 +18,14 @@ export interface Product {
   status: 'published' | 'draft' | 'archived';
   sku: string;
   createdAt?: any;
+  updatedAt?: any;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  image: string;
 }
 
 export interface UserProfile {

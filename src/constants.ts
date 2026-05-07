@@ -27,7 +27,10 @@ export const PRODUCTS: Product[] = [
     isBestSeller: true,
     stock: 15,
     status: 'published',
-    sku: 'DTL-ACX1'
+    sku: 'DTL-ACX1',
+    productId: '001',
+    discount: 0,
+    isReviewsEnabled: true
   },
   {
     id: 'dtl-002',
@@ -55,7 +58,10 @@ export const PRODUCTS: Product[] = [
     isNew: true,
     stock: 24,
     status: 'published',
-    sku: 'DTL-LWS4'
+    sku: 'DTL-LWS4',
+    productId: '002',
+    discount: 5,
+    isReviewsEnabled: true
   },
   {
     id: 'dtl-003',
@@ -82,7 +88,10 @@ export const PRODUCTS: Product[] = [
     },
     stock: 9,
     status: 'published',
-    sku: 'DTL-ZP12'
+    sku: 'DTL-ZP12',
+    productId: '003',
+    discount: 0,
+    isReviewsEnabled: true
   },
   {
     id: 'dtl-004',
@@ -109,6 +118,9 @@ export const PRODUCTS: Product[] = [
     },
     stock: 50,
     status: 'published',
-    sku: 'DTL-NCP1'
+    sku: 'DTL-NCP1',
+    productId: '004',
+    discount: 10,
+    isReviewsEnabled: true
   }
 ];

@@ -53,7 +53,10 @@ service cloud.firestore {
       return data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
              data.price is number && data.price >= 0 &&
              data.stock is number && data.stock >= 0 &&
-             data.category is string && data.category.size() <= 50;
+             data.category is string && data.category.size() <= 50 &&
+             data.productId is string && data.productId.size() > 0 &&
+             data.discount is number && data.discount >= 0 && data.discount <= 100 &&
+             data.isReviewsEnabled is bool;
     }
 
     function isValidOrder(data) {

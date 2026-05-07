@@ -21,21 +21,27 @@
       "type": "object",
       "properties": {
         "id": { "type": "string" },
+        "productId": { "type": "string" },
         "name": { "type": "string" },
         "description": { "type": "string" },
         "price": { "type": "number" },
+        "discount": { "type": "number" },
         "category": { "type": "string" },
         "image": { "type": "string" },
         "rating": { "type": "number" },
         "reviews": { "type": "number" },
+        "isReviewsEnabled": { "type": "boolean" },
         "features": { "type": "array" },
         "specs": { "type": "object" },
         "stock": { "type": "number" },
         "isNew": { "type": "boolean" },
         "isBestSeller": { "type": "boolean" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "status": { "type": "string", "enum": ["published", "draft", "archived"] },
+        "sku": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["name", "price", "category", "stock"]
+      "required": ["name", "price", "category", "stock", "productId"]
     },
     "Category": {
       "title": "Category",
