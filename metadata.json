@@ -1,0 +1,6 @@
+{
+  "name": "DigiTechLabs",
+  "description": "Premium consumer tech and gadgets retailer offering innovative, high-performance devices for enthusiasts and professionals.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["E-commerce", "Product Showcase", "Cart System"]
+}
