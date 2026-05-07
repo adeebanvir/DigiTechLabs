@@ -1,22 +1,50 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, ShieldCheck, Truck } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { orderService } from '../services/dataService';
+import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, ShieldCheck, Truck, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function Cart() {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, clearCart } = useCart();
+  const { user, login } = useAuth();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const shipping = cartTotal > 500 ? 0 : 25;
   const tax = cartTotal * 0.08;
   const grandTotal = cartTotal + shipping + tax;
 
-  const handleCheckout = (e: React.FormEvent) => {
+  const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSuccess(true);
-    clearCart();
+    if (!user) {
+      alert("Please login to proceed with your innovation purchase.");
+      login();
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const formData = new FormData(e.currentTarget as HTMLFormElement);
+      const address = formData.get('address') as string;
+      
+      await orderService.createOrder(
+        user.uid,
+        cart.map(item => ({ id: item.id, name: item.name, price: item.price, quantity: item.quantity })),
+        grandTotal,
+        address
+      );
+
+      setIsSuccess(true);
+      clearCart();
+    } catch (error) {
+      console.error("Checkout failed:", error);
+      alert("Transaction failed. Please verify your credentials and try again.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (isSuccess) {
@@ -178,31 +206,46 @@ export default function Cart() {
                 <form onSubmit={handleCheckout} className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
                   <input 
                     required
+                    name="email"
                     type="email" 
+                    defaultValue={user?.email || ''}
                     placeholder="Email Address" 
                     className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]"
                   />
                   <input 
                     required
+                    name="name"
                     type="text" 
+                    defaultValue={user?.displayName || ''}
                     placeholder="Full Name" 
                     className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]"
                   />
                   <input 
                     required
+                    name="address"
                     type="text" 
                     placeholder="Shipping Address" 
                     className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]"
                   />
                   <div className="grid grid-cols-2 gap-4">
-                    <input required type="text" placeholder="Exp Date" className="bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]" />
-                    <input required type="text" placeholder="CVC" className="bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]" />
+                    <input required name="expDate" type="text" placeholder="Exp Date" className="bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]" />
+                    <input required name="cvc" type="text" placeholder="CVC" className="bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]" />
                   </div>
                   <button 
                     type="submit"
-                    className="w-full py-5 bg-[#00A650] text-white rounded-2xl font-bold hover:bg-[#008a42] transition-all shadow-xl shadow-[#00A650]/20"
+                    disabled={isProcessing}
+                    className={`w-full py-5 bg-[#00A650] text-white rounded-2xl font-bold transition-all shadow-xl shadow-[#00A650]/20 flex items-center justify-center ${
+                      isProcessing ? 'opacity-70 cursor-not-allowed' : 'hover:bg-[#008a42]'
+                    }`}
                   >
-                    Confirm & Pay ${grandTotal.toFixed(2)}
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Verifying...
+                      </>
+                    ) : (
+                      `Confirm & Pay $${grandTotal.toFixed(2)}`
+                    )}
                   </button>
                   <button 
                     type="button"

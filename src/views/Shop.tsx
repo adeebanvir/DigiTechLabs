@@ -1,19 +1,30 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Product } from '../types';
-import { PRODUCTS } from '../constants';
+import { productService } from '../services/dataService';
 import ProductCard from '../components/products/ProductCard';
-import { Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { Search, ChevronDown, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function Shop() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
 
-  const categories = ['All', ...new Set(PRODUCTS.map(p => p.category))];
+  useEffect(() => {
+    productService.getAllProducts().then(data => {
+      setProducts(data);
+      setLoading(false);
+    });
+  }, []);
+
+  const categories = useMemo(() => {
+    return ['All', ...new Set(products.map(p => p.category))];
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter(product => {
+    return products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            product.description.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
@@ -22,9 +33,18 @@ export default function Shop() {
       if (sortBy === 'price-low') return a.price - b.price;
       if (sortBy === 'price-high') return b.price - a.price;
       if (sortBy === 'rating') return b.rating - a.rating;
-      return 0; // Default: 'newest'
+      return 0;
     });
-  }, [searchQuery, selectedCategory, sortBy]);
+  }, [products, searchQuery, selectedCategory, sortBy]);
+
+  if (loading) {
+    return (
+      <div className="pt-40 flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-10 h-10 text-[#00A650] animate-spin" />
+        <p className="text-sm font-bold uppercase tracking-widest text-gray-400">Syncing Catalog...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-32 pb-24 min-h-screen bg-gray-50">

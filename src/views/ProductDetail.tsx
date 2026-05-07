@@ -1,17 +1,42 @@
 import { useParams, Link } from 'react-router-dom';
-import { PRODUCTS } from '../constants';
+import { Product } from '../types';
+import { productService } from '../services/dataService';
 import { useCart } from '../context/CartContext';
-import { Star, ArrowLeft, Shield, Truck, RotateCcw, Check, Plus, Minus } from 'lucide-react';
+import { Star, ArrowLeft, Shield, Truck, RotateCcw, Check, Plus, Minus, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ProductCard from '../components/products/ProductCard';
 
 export default function ProductDetail() {
   const { id } = useParams();
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   
-  const product = PRODUCTS.find(p => p.id === id);
+  useEffect(() => {
+    if (id) {
+      setLoading(true);
+      productService.getProductById(id).then(async (data) => {
+        setProduct(data);
+        if (data) {
+          const all = await productService.getAllProducts();
+          setRelatedProducts(all.filter(p => p.category === data.category && p.id !== data.id).slice(0, 3));
+        }
+        setLoading(false);
+      });
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="pt-40 flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-10 h-10 text-[#00A650] animate-spin" />
+        <p className="text-sm font-bold uppercase tracking-widest text-gray-400">Loading Innovation details...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -21,8 +46,6 @@ export default function ProductDetail() {
       </div>
     );
   }
-
-  const relatedProducts = PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 3);
 
   return (
     <div className="pt-32 pb-24">

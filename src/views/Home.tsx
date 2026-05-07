@@ -1,11 +1,21 @@
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Star, ArrowRight, Zap, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
+import { Star, ArrowRight, Zap, ShieldCheck, Truck, RotateCcw, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PRODUCTS } from '../constants';
+import { Product } from '../types';
+import { productService } from '../services/dataService';
 import ProductCard from '../components/products/ProductCard';
 
 export default function Home() {
-  const featuredProducts = PRODUCTS.filter(p => p.isBestSeller || p.isNew).slice(0, 3);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    productService.getFeaturedProducts().then(data => {
+      setFeaturedProducts(data);
+      setLoading(false);
+    });
+  }, []);
 
   const usps = [
     { icon: <Truck className="w-6 h-6" />, title: 'Expedited Delivery', desc: 'Free same-day processing on all orders.' },
@@ -115,7 +125,12 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProducts.map(product => (
+            {loading ? (
+              <div className="col-span-full py-12 flex flex-col items-center justify-center text-gray-400">
+                <Loader2 className="w-10 h-10 animate-spin mb-4" />
+                <p className="text-xs font-bold uppercase tracking-widest">Fetching Curation...</p>
+              </div>
+            ) : featuredProducts.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
