@@ -42,8 +42,16 @@ export const productService = {
 
   async getFeaturedProducts(): Promise<Product[]> {
     try {
-      const q = query(collection(db, 'products'), where('isBestSeller', '==', true), limit(3));
+      const q = query(collection(db, 'products'), where('isFeatured', '==', true));
       const snap = await getDocs(q);
+      
+      // Fallback to best sellers if no featured products
+      if (snap.empty) {
+        const fallbackQ = query(collection(db, 'products'), where('isBestSeller', '==', true), limit(8));
+        const fallbackSnap = await getDocs(fallbackQ);
+        return fallbackSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+      }
+
       return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
     } catch (error) {
       handleFirestoreError(error, OperationType.LIST, 'products');

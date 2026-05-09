@@ -51,19 +51,25 @@ service cloud.firestore {
 
     function isValidProduct(data) {
       return data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
-             data.price is number && data.price >= 0 &&
-             data.stock is number && data.stock >= 0 &&
-             data.category is string && data.category.size() <= 50 &&
-             data.productId is string && data.productId.size() > 0 &&
-             data.discount is number && data.discount >= 0 && data.discount <= 100 &&
-             data.isReviewsEnabled is bool;
+             data.get('price', 0) is number && data.get('price', 0) >= 0 &&
+             data.get('stock', 0) is number && data.get('stock', 0) >= 0 &&
+             data.get('category', 'Uncategorized') is string && data.get('category', '').size() <= 100 &&
+             data.get('productId', 'TEMP') is string && data.get('productId', '').size() > 0 &&
+             data.get('discount', 0) is number && data.get('discount', 0) >= 0 && data.get('discount', 0) <= 100 &&
+             data.get('isReviewsEnabled', true) is bool &&
+             data.get('isFeatured', false) is bool &&
+             data.get('isNew', false) is bool &&
+             data.get('isBestSeller', false) is bool &&
+             data.get('status', 'published') in ['published', 'draft', 'archived'] &&
+             data.get('image', '') is string && data.get('image', '').size() <= 2000;
     }
 
     function isValidOrder(data) {
-      return data.userId == request.auth.uid &&
-             data.items is list && data.items.size() > 0 && data.items.size() <= 50 &&
+      return data.userId is string &&
+             data.items is list && data.items.size() > 0 && data.items.size() <= 100 &&
              data.total is number && data.total >= 0 &&
-             data.status in ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
+             data.status in ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'] &&
+             data.customerName is string && data.email is string;
     }
 
     function isValidReview(data) {

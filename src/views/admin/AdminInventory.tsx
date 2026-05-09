@@ -185,19 +185,21 @@ export default function AdminInventory() {
                         </button>
                         <input 
                           type="number"
-                          defaultValue={product.stock}
+                          value={isNaN(product.stock) ? '' : product.stock}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value) || 0;
+                            setProducts(prev => prev.map(p => p.id === product.id ? { ...p, stock: val } : p));
+                          }}
                           onBlur={(e) => {
-                            const val = parseInt(e.target.value);
-                            if (!isNaN(val) && val !== product.stock) {
-                              updateStock(product.id, val, 0);
+                            const val = parseInt(e.target.value) || 0;
+                            if (val !== products.find(p => p.id === product.id)?.stock) {
+                               updateStock(product.id, val, 0);
                             }
                           }}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
-                              const val = parseInt((e.target as HTMLInputElement).value);
-                              if (!isNaN(val) && val !== product.stock) {
-                                updateStock(product.id, val, 0);
-                              }
+                              const val = parseInt((e.target as HTMLInputElement).value) || 0;
+                              updateStock(product.id, val, 0);
                             }
                           }}
                           className="w-16 text-center text-xs font-bold bg-transparent border-none outline-none focus:text-[#00A650]"

@@ -114,7 +114,7 @@ export default function AdminOverview() {
         products: pSnap.size,
         users: uSnap.size,
         orders: activeOrders,
-        revenue: totalRevenue,
+        revenue: isNaN(totalRevenue) ? 0 : totalRevenue,
         conversion: uSnap.size > 0 ? ((oSnapAll.size / uSnap.size) * 100).toFixed(1) + '%' : '0%'
       });
       setRecentActivity(oSnapRecent.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -150,7 +150,32 @@ export default function AdminOverview() {
           updatedAt: serverTimestamp(),
         });
       }
-      alert("Store architecture initialized and assets deployed.");
+
+      // Seed some dummy orders for the chart if empty
+      const oSnap = await getDocs(collection(db, 'orders'));
+      if (oSnap.empty) {
+        const orderDates = [0, 1, 2, 3, 4, 5, 6].map(i => {
+           const d = new Date();
+           d.setDate(d.getDate() - i);
+           return d;
+        });
+
+        for(const date of orderDates) {
+          const id = `seed_order_${date.getTime()}`;
+          await setDoc(doc(db, 'orders', id), {
+            userId: 'system-seed',
+            customerName: 'Innovation Tester',
+            email: 'test@example.com',
+            total: Math.floor(Math.random() * 5000) + 1000,
+            status: 'delivered',
+            items: [{ id: '1', name: 'Neural Linker V1', price: 1200, quantity: 1 }],
+            createdAt: date,
+            updatedAt: date
+          });
+        }
+      }
+
+      alert("Digital infrastructure deployed. System initialized with historical simulation data.");
       fetchStats();
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, 'products');

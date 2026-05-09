@@ -24,6 +24,7 @@ import AdminUsers from './views/admin/AdminUsers';
 import AdminCategories from './views/admin/AdminCategories';
 import AdminInventory from './views/admin/AdminInventory';
 import AdminMedia from './views/admin/AdminMedia';
+import AdminFeatured from './views/admin/AdminFeatured';
 
 // Admin Auth Guard
 const AdminRoute = ({ children }: { children: any }) => {
@@ -81,6 +82,7 @@ function AppContent() {
           <Route path="/admin/orders" element={<AdminRoute><AdminLayout><AdminOrders /></AdminLayout></AdminRoute>} />
           <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
           <Route path="/admin/media" element={<AdminRoute><AdminLayout><AdminMedia /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/featured" element={<AdminRoute><AdminLayout><AdminFeatured /></AdminLayout></AdminRoute>} />
         </Routes>
       </main>
       {!isAdminPath && <Footer />}

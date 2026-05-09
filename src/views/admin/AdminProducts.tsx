@@ -48,6 +48,9 @@ export default function AdminProducts() {
     stock: 0,
     productId: '',
     isReviewsEnabled: true,
+    isNew: false,
+    isBestSeller: false,
+    isFeatured: false,
     status: 'published',
     image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=60',
     sku: '',
@@ -340,7 +343,7 @@ export default function AdminProducts() {
                         <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                             <motion.div 
                                 initial={{ width: 0 }}
-                                animate={{ width: `${Math.min(100, (product.stock / 50) * 100)}%` }}
+                                animate={{ width: `${Math.min(100, ((product.stock || 0) / 50) * 100)}%` }}
                                 className={`h-full rounded-full ${product.stock > 10 ? 'bg-green-500' : product.stock > 0 ? 'bg-orange-500' : 'bg-red-500'}`}
                             />
                         </div>
@@ -544,8 +547,8 @@ export default function AdminProducts() {
                                 type="number" 
                                 step="0.01"
                                 placeholder="0.00" 
-                                value={formData.price}
-                                onChange={(e) => setFormData({...formData, price: parseFloat(e.target.value)})}
+                                value={isNaN(formData.price || 0) ? '' : formData.price}
+                                onChange={(e) => setFormData({...formData, price: parseFloat(e.target.value) || 0})}
                                 className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#00A650] focus:bg-white rounded-2xl outline-none transition-all font-bold"
                             />
                         </div>
@@ -554,7 +557,7 @@ export default function AdminProducts() {
                             <input 
                                 type="number" 
                                 placeholder="0" 
-                                value={formData.discount}
+                                value={isNaN(formData.discount || 0) ? '' : formData.discount}
                                 onChange={(e) => setFormData({...formData, discount: parseInt(e.target.value) || 0})}
                                 className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#00A650] focus:bg-white rounded-2xl outline-none transition-all font-bold text-red-500"
                             />
@@ -567,8 +570,8 @@ export default function AdminProducts() {
                             required
                             type="number" 
                             placeholder="0" 
-                            value={formData.stock}
-                            onChange={(e) => setFormData({...formData, stock: parseInt(e.target.value)})}
+                            value={isNaN(formData.stock || 0) ? '' : formData.stock}
+                            onChange={(e) => setFormData({...formData, stock: parseInt(e.target.value) || 0})}
                             className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#00A650] focus:bg-white rounded-2xl outline-none transition-all font-bold"
                         />
                     </div>
@@ -602,6 +605,22 @@ export default function AdminProducts() {
                             >
                                 <motion.div 
                                     animate={{ left: formData.isNew ? 'calc(100% - 20px)' : '4px' }}
+                                    className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm"
+                                />
+                            </button>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h4 className="text-sm font-bold text-[#141414]">Featured Product</h4>
+                                <p className="text-[10px] text-gray-400 font-medium italic">Shows in homepage slider and "Featured" category</p>
+                            </div>
+                            <button 
+                                type="button"
+                                onClick={() => setFormData({...formData, isFeatured: !formData.isFeatured})}
+                                className={`w-12 h-6 rounded-full transition-all relative ${formData.isFeatured ? 'bg-[#00A650]' : 'bg-gray-300'}`}
+                            >
+                                <motion.div 
+                                    animate={{ left: formData.isFeatured ? 'calc(100% - 20px)' : '4px' }}
                                     className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm"
                                 />
                             </button>

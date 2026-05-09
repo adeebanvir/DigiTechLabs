@@ -98,6 +98,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { to: '/admin/products', icon: <Package size={20} />, label: 'Products' },
         { to: '/admin/categories', icon: <Tag size={20} />, label: 'Categories' },
         { to: '/admin/inventory', icon: <Truck size={20} />, label: 'Inventory' },
+        { to: '/admin/featured', icon: <Store size={20} />, label: 'Featured Selection' },
       ]
     },
     {

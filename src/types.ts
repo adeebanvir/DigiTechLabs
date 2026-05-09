@@ -14,6 +14,7 @@ export interface Product {
   specs: Record<string, string>;
   isNew?: boolean;
   isBestSeller?: boolean;
+  isFeatured?: boolean;
   stock: number;
   status: 'published' | 'draft' | 'archived';
   sku: string;

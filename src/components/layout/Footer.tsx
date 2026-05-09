@@ -37,9 +37,22 @@ export default function Footer() {
             <h4 className="text-base font-semibold mb-4">Explore</h4>
             <ul className="space-y-2 text-gray-400 text-xs">
               <li><Link to="/shop" className="hover:text-[#00A650] transition-colors">All Products</Link></li>
+              <li>
+                <Link 
+                  to="/#featured-innovations" 
+                  onClick={(e) => {
+                    if (window.location.pathname === '/') {
+                      e.preventDefault();
+                      document.getElementById('featured-innovations')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className="hover:text-[#00A650] transition-colors"
+                >
+                  Innovations
+                </Link>
+              </li>
               <li><Link to="/shop" className="hover:text-[#00A650] transition-colors">New Arrivals</Link></li>
               <li><Link to="/shop" className="hover:text-[#00A650] transition-colors">Best Sellers</Link></li>
-              <li><Link to="/shop" className="hover:text-[#00A650] transition-colors">Accessories</Link></li>
             </ul>
           </div>
 

@@ -20,14 +20,24 @@ export default function Shop() {
   }, []);
 
   const categories = useMemo(() => {
-    return ['All', ...new Set(products.map(p => p.category))];
+    const list = ['All', 'Featured', ...new Set(products.map(p => p.category))];
+    return list;
   }, [products]);
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            product.description.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+      
+      let matchesCategory = false;
+      if (selectedCategory === 'All') {
+        matchesCategory = true;
+      } else if (selectedCategory === 'Featured') {
+        matchesCategory = !!product.isFeatured;
+      } else {
+        matchesCategory = product.category === selectedCategory;
+      }
+
       return matchesSearch && matchesCategory;
     }).sort((a, b) => {
       if (sortBy === 'price-low') return a.price - b.price;
