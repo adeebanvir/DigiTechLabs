@@ -21,10 +21,12 @@ service cloud.firestore {
 
     function isAdmin() {
       // Bootstrapped Admin: adeebanvir09@gmail.com
-      // Logic relies on verified email or explicit admin document
-      return isVerified() && (
+      // Logic relies on verified email OR the specific hardcoded admin email
+      // We also trust users marked as 'admin' or 'super-admin' in the users collection
+      return (isVerified() || request.auth.token.email == "adeebanvir09@gmail.com") && (
         request.auth.token.email == "adeebanvir09@gmail.com" ||
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super-admin'])
       );
     }
 
@@ -45,7 +47,9 @@ service cloud.firestore {
     function isValidUser(data) {
       return data.userId == request.auth.uid &&
              data.email is string && data.email.size() <= 100 &&
-             data.role in ['customer', 'admin', 'support'] &&
+             data.role in ['customer', 'admin', 'support', 'super-admin'] &&
+             data.status in ['active', 'suspended', 'banned'] &&
+             data.provider is string &&
              (data.role == 'customer' || isAdmin()); // Pillar 4: Only existing admins can escalate roles
     }
 
@@ -94,10 +98,11 @@ service cloud.firestore {
     match /users/{userId} {
       allow get: if (isOwner(userId) || isAdmin()) && isValidId(userId);
       allow list: if isAdmin();
-      allow create: if isOwner(userId) && isValidUser(incoming()) && isValidId(userId);
+      allow create: if isOwner(userId) && isValidUser(incoming()) && isValidId(userId) &&
+                    incoming().createdAt == request.time && incoming().updatedAt == request.time;
       allow update: if (isOwner(userId) || isAdmin()) && 
                     isValidUser(incoming()) &&
-                    incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'updatedAt', 'status']) &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'updatedAt', 'status', 'lastLogin', 'provider']) &&
                     incoming().updatedAt == request.time;
     }
 

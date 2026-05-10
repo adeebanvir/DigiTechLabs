@@ -13,6 +13,7 @@ import ProductDetail from './views/ProductDetail';
 import Cart from './views/Cart';
 import About from './views/About';
 import Contact from './views/Contact';
+import Login from './views/Login';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -73,6 +74,7 @@ function AppContent() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
           
           {/* Admin Ecosystem */}
           <Route path="/admin" element={<AdminRoute><AdminLayout><AdminOverview /></AdminLayout></AdminRoute>} />

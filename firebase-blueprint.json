@@ -9,11 +9,14 @@
         "displayName": { "type": "string" },
         "email": { "type": "string", "format": "email" },
         "photoURL": { "type": "string" },
-        "role": { "type": "string", "enum": ["customer", "admin", "support"] },
+        "role": { "type": "string", "enum": ["customer", "admin", "support", "super-admin"] },
+        "status": { "type": "string", "enum": ["active", "suspended", "banned"] },
+        "provider": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "lastLogin": { "type": "string", "format": "date-time" }
       },
-      "required": ["userId", "email", "role"]
+      "required": ["userId", "email", "role", "status", "provider"]
     },
     "Product": {
       "title": "Product",

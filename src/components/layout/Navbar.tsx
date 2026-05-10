@@ -179,13 +179,13 @@ export default function Navbar() {
                     </div>
                   </div>
                 ) : (
-                  <button 
-                    onClick={login}
+                  <Link 
+                    to="/login"
                     className="flex items-center space-x-2 px-4 py-2 bg-[#141414] text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-[#00A650] transition-all whitespace-nowrap"
                   >
                     <LogIn className="w-4 h-4" />
                     <span>Login</span>
-                  </button>
+                  </Link>
                 )}
               </div>
             </div>
@@ -282,12 +282,13 @@ export default function Navbar() {
                   Logout
                 </button>
               ) : (
-                <button
-                  onClick={() => { login(); setIsOpen(false); }}
-                  className="w-full text-left px-3 py-4 text-base font-medium text-[#00A650] hover:bg-gray-50 rounded-lg transition-colors"
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="block px-3 py-4 text-base font-medium text-[#00A650] hover:bg-gray-50 rounded-lg transition-colors"
                 >
-                  Login with Google
-                </button>
+                  Login
+                </Link>
               )}
             </div>
           </div>

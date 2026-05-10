@@ -38,6 +38,7 @@ export interface UserProfile {
   status: 'active' | 'suspended' | 'banned';
   createdAt: any;
   lastLogin?: any;
+  provider?: string;
 }
 
 export interface OrderItem {
