@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, Cpu, LogIn, LogOut, LayoutDashboard, User as UserIcon, Search } from 'lucide-react';
+import { ShoppingCart, Menu, X, Cpu, LogIn, LogOut, LayoutDashboard, User as UserIcon, Search, Package, ChevronDown, Layers } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
-import { productService } from '../../services/dataService';
-import { Product } from '../../types';
+import { productService, categoryService } from '../../services/dataService';
+import { Product, Category } from '../../types';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,15 +17,22 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [showSearch, setShowSearch] = useState(false);
+  const [showCategories, setShowCategories] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
+  const categoryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     productService.getAllProducts().then(setAllProducts);
+    categoryService.getAllCategories().then(setCategories);
 
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setShowSearch(false);
+      }
+      if (categoryRef.current && !categoryRef.current.contains(e.target as Node)) {
+        setShowCategories(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -58,7 +65,6 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Shop', path: '/shop' },
-    { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
 
@@ -109,7 +115,13 @@ export default function Navbar() {
                             onClick={() => { setShowSearch(false); setSearchQuery(''); }}
                             className="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors"
                           >
-                            <img src={product.image} className="w-10 h-10 rounded-lg object-cover mr-3" alt="" />
+                          <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-gray-50">
+                            {product.image ? (
+                              <img src={product.image} className="w-10 h-10 rounded-lg object-cover mr-3" alt="" />
+                            ) : (
+                              <LayoutDashboard className="w-5 h-5 text-gray-300" />
+                            )}
+                          </div>
                             <div className="overflow-hidden">
                               <p className="text-sm font-bold text-[#141414] truncate">{product.name}</p>
                               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{product.category}</p>
@@ -136,6 +148,55 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center space-x-6">
+              {/* Category Dropdown */}
+              <div ref={categoryRef} className="relative">
+                <button
+                  onClick={() => setShowCategories(!showCategories)}
+                  className={`flex items-center space-x-1 text-sm font-medium transition-colors hover:text-[#00A650] py-2 cursor-pointer ${
+                    showCategories ? 'text-[#00A650]' : 'text-[#141414]'
+                  }`}
+                >
+                  <Layers className="w-4 h-4 mr-1" />
+                  <span>Categories</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${showCategories ? 'rotate-180' : ''}`} />
+                </button>
+
+                <AnimatePresence>
+                  {showCategories && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 overflow-hidden z-50"
+                    >
+                      <div className="px-4 py-2 border-b border-gray-50 mb-1">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Browse by tech</p>
+                      </div>
+                      {categories.slice(0, 5).map((category) => (
+                        <Link
+                          key={category.id}
+                          to={`/shop?category=${category.slug}`}
+                          onClick={() => setShowCategories(false)}
+                          className="flex items-center px-4 py-2 text-sm text-[#141414] hover:bg-gray-50 hover:text-[#00A650] transition-colors"
+                        >
+                          <span className="w-2 h-2 rounded-full bg-gray-200 mr-3 group-hover:bg-[#00A650]"></span>
+                          {category.name}
+                        </Link>
+                      ))}
+                      {categories.length > 5 && (
+                        <Link
+                          to="/shop"
+                          onClick={() => setShowCategories(false)}
+                          className="flex items-center px-4 py-3 mt-1 text-xs font-bold text-[#00A650] hover:bg-[#00A650]/5 border-t border-gray-50 uppercase tracking-widest"
+                        >
+                          More categories
+                        </Link>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
               <div className="flex items-center space-x-6 mr-4">
                 {navLinks.map((link) => (
                   <Link
@@ -174,9 +235,13 @@ export default function Navbar() {
                     >
                       <LogOut className="w-5 h-5" />
                     </button>
-                    <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 flex-shrink-0">
-                      <img src={user.photoURL || ''} alt="Profile" className="w-full h-full object-cover" />
-                    </div>
+                    <Link to="/account" className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 flex-shrink-0 hover:ring-2 hover:ring-[#00A650]/20 transition-all flex items-center justify-center bg-gray-50">
+                      {user.photoURL ? (
+                        <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <UserIcon className="w-4 h-4 text-gray-400" />
+                      )}
+                    </Link>
                   </div>
                 ) : (
                   <Link 
@@ -192,7 +257,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center space-x-4">
+          <div className="md:hidden flex items-center space-x-2">
             <Link to="/cart" className="relative p-2 text-[#141414]">
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
@@ -201,6 +266,15 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
+            {user && (
+              <Link to="/account" className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 flex-shrink-0 flex items-center justify-center bg-gray-50">
+                {user.photoURL ? (
+                  <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <UserIcon className="w-4 h-4 text-gray-400" />
+                )}
+              </Link>
+            )}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 text-[#141414] focus:outline-none"
@@ -242,7 +316,13 @@ export default function Navbar() {
                         onClick={() => { setIsOpen(false); setSearchQuery(''); }}
                         className="flex items-center p-3"
                       >
-                        <img src={product.image} className="w-8 h-8 rounded-lg object-cover mr-3" alt="" />
+                        <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50 mr-3">
+                          {product.image ? (
+                            <img src={product.image} className="w-full h-full object-cover" alt="" />
+                          ) : (
+                            <Package className="w-4 h-4 text-gray-300 m-auto h-full flex items-center justify-center pt-2" />
+                          )}
+                        </div>
                         <div className="flex-grow">
                           <p className="text-xs font-bold text-[#141414]">{product.name}</p>
                           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{product.category}</p>
@@ -265,6 +345,53 @@ export default function Navbar() {
                   {link.name}
                 </Link>
               ))}
+              
+              {/* Mobile Categories */}
+              <div className="border-t border-gray-50 pt-2 pb-1 px-3">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Categories</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {categories.slice(0, 5).map((category) => (
+                    <Link
+                      key={category.id}
+                      to={`/shop?category=${category.slug}`}
+                      onClick={() => setIsOpen(false)}
+                      className="text-sm py-2 text-[#141414] hover:text-[#00A650]"
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                  {categories.length > 5 && (
+                    <Link
+                      to="/shop"
+                      onClick={() => setIsOpen(false)}
+                      className="text-sm py-2 font-bold text-[#00A650]"
+                    >
+                      More...
+                    </Link>
+                  )}
+                </div>
+              </div>
+
+              {user && (
+                <Link
+                  to="/account"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-3 py-4 text-base font-medium text-[#141414] hover:bg-gray-50 rounded-lg transition-colors border-t border-gray-50 mt-2"
+                >
+                  <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 flex-shrink-0 flex items-center justify-center bg-gray-50">
+                    {user.photoURL ? (
+                      <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <UserIcon className="w-4 h-4 text-gray-400" />
+                    )}
+                  </div>
+                  <div className="flex-grow">
+                    <p className="text-sm font-bold leading-none">{user.displayName || 'My Account'}</p>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Manage Profile</p>
+                  </div>
+                </Link>
+              )}
+
               {user && isAdmin && (
                 <Link
                   to="/admin"

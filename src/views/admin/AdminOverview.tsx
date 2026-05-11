@@ -252,7 +252,7 @@ export default function AdminOverview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Revenue Chart */}
-        <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+        <div className="lg:col-span-2 min-w-0 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
           <div className="flex justify-between items-center mb-8">
             <h3 className="text-xl font-bold text-[#141414]">Monetary Flow</h3>
             <select className="bg-gray-50 border-none rounded-xl text-xs font-bold px-3 py-2 outline-none">
@@ -260,8 +260,8 @@ export default function AdminOverview() {
                 <option>Last 30 Days</option>
             </select>
           </div>
-          <div className="h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-80 w-full min-h-[320px]">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">

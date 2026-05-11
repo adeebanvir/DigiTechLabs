@@ -128,8 +128,12 @@ export default function AdminUsers() {
                 <tr key={user.userId} className="hover:bg-gray-50/50 transition-colors group">
                   <td className="px-8 py-6">
                     <div className="flex items-center space-x-4">
-                      <div className="relative">
-                        <img src={user.photoURL} alt={user.displayName} className="w-10 h-10 rounded-xl object-cover ring-2 ring-white shadow-sm" />
+                      <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center ring-2 ring-white shadow-sm">
+                        {user.photoURL ? (
+                          <img src={user.photoURL} alt={user.displayName} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-gray-300 font-bold text-xs">{(user.displayName || '?')[0]}</span>
+                        )}
                         {user.provider === 'google.com' && (
                           <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm border border-gray-100 ring-1 ring-gray-50 flex items-center justify-center">
                             <svg className="w-2.5 h-2.5" viewBox="0 0 24 24">

@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Product } from '../types';
 import { productService } from '../services/dataService';
 import ProductCard from '../components/products/ProductCard';
@@ -8,7 +9,14 @@ import { motion, AnimatePresence } from 'motion/react';
 export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const location = useLocation();
+  
+  // Parse URL params
+  const queryParams = new URLSearchParams(location.search);
+  const initialCategory = queryParams.get('category');
+  const initialSearch = queryParams.get('search');
+
+  const [searchQuery, setSearchQuery] = useState(initialSearch || '');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
 
@@ -16,8 +24,20 @@ export default function Shop() {
     productService.getAllProducts().then(data => {
       setProducts(data);
       setLoading(false);
+      
+      if (initialCategory) {
+        // Find category name from products or mapping if slug is used
+        // For simplicity, we'll try to match name or keep slug
+        setSelectedCategory(initialCategory);
+      }
     });
-  }, []);
+  }, [initialCategory]);
+
+  useEffect(() => {
+    if (initialSearch !== null) {
+      setSearchQuery(initialSearch);
+    }
+  }, [initialSearch]);
 
   const categories = useMemo(() => {
     const list = ['All', 'Featured', ...new Set(products.map(p => p.category))];
@@ -30,12 +50,17 @@ export default function Shop() {
                            product.description.toLowerCase().includes(searchQuery.toLowerCase());
       
       let matchesCategory = false;
+      const lowerSelected = selectedCategory.toLowerCase();
+      const lowerProductCat = product.category.toLowerCase();
+
       if (selectedCategory === 'All') {
         matchesCategory = true;
       } else if (selectedCategory === 'Featured') {
         matchesCategory = !!product.isFeatured;
       } else {
-        matchesCategory = product.category === selectedCategory;
+        // Match by exact name or slugified name
+        matchesCategory = lowerProductCat === lowerSelected || 
+                          lowerProductCat.replace(/\s+/g, '-') === lowerSelected;
       }
 
       return matchesSearch && matchesCategory;

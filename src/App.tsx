@@ -26,12 +26,30 @@ import AdminCategories from './views/admin/AdminCategories';
 import AdminInventory from './views/admin/AdminInventory';
 import AdminMedia from './views/admin/AdminMedia';
 import AdminFeatured from './views/admin/AdminFeatured';
+import AccountLayout from './components/account/AccountLayout';
+import AccountOverview from './views/account/AccountOverview';
+import AccountOrders from './views/account/AccountOrders';
+import AccountWishlist from './views/account/AccountWishlist';
+import AccountAddresses from './views/account/AccountAddresses';
+import AccountPayments from './views/account/AccountPayments';
+import AccountSecurity from './views/account/AccountSecurity';
+import AccountNotifications from './views/account/AccountNotifications';
+import AccountSettings from './views/account/AccountSettings';
+import AccountSupport from './views/account/AccountSupport';
 
 // Admin Auth Guard
 const AdminRoute = ({ children }: { children: any }) => {
   const { isAdmin, loading } = useAuth();
   if (loading) return <div className="h-screen flex items-center justify-center font-bold uppercase tracking-widest text-[#00A650]">Verifying Security...</div>;
   if (!isAdmin) return <div className="h-screen flex items-center justify-center font-bold text-red-500">Access Restricted.</div>;
+  return <>{children}</>;
+};
+
+// User Auth Guard
+const UserRoute = ({ children }: { children: any }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="h-screen flex items-center justify-center font-bold uppercase tracking-widest text-[#00A650]">Authenticating...</div>;
+  if (!user) return <Login />;
   return <>{children}</>;
 };
 
@@ -62,11 +80,12 @@ export default function App() {
 function AppContent() {
   const { pathname } = useLocation();
   const isAdminPath = pathname.startsWith('/admin');
+  const isAccountPath = pathname.startsWith('/account');
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans bg-white selection:bg-[#00A650]/30 transition-colors duration-300 ${isAdminPath ? 'overflow-hidden h-screen' : ''}`}>
-      {!isAdminPath && <Navbar />}
-      <main className={isAdminPath ? "h-full overflow-hidden" : "flex-grow"}>
+    <div className={`min-h-screen flex flex-col font-sans bg-white selection:bg-[#00A650]/30 transition-colors duration-300 ${isAdminPath || isAccountPath ? 'overflow-hidden h-screen' : ''}`}>
+      {!isAdminPath && !isAccountPath && <Navbar />}
+      <main className={isAdminPath || isAccountPath ? "h-full overflow-hidden" : "flex-grow"}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
@@ -76,6 +95,17 @@ function AppContent() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           
+          {/* Account Ecosystem */}
+          <Route path="/account" element={<UserRoute><AccountLayout><AccountOverview /></AccountLayout></UserRoute>} />
+          <Route path="/account/orders" element={<UserRoute><AccountLayout><AccountOrders /></AccountLayout></UserRoute>} />
+          <Route path="/account/wishlist" element={<UserRoute><AccountLayout><AccountWishlist /></AccountLayout></UserRoute>} />
+          <Route path="/account/addresses" element={<UserRoute><AccountLayout><AccountAddresses /></AccountLayout></UserRoute>} />
+          <Route path="/account/payments" element={<UserRoute><AccountLayout><AccountPayments /></AccountLayout></UserRoute>} />
+          <Route path="/account/security" element={<UserRoute><AccountLayout><AccountSecurity /></AccountLayout></UserRoute>} />
+          <Route path="/account/notifications" element={<UserRoute><AccountLayout><AccountNotifications /></AccountLayout></UserRoute>} />
+          <Route path="/account/settings" element={<UserRoute><AccountLayout><AccountSettings /></AccountLayout></UserRoute>} />
+          <Route path="/account/support" element={<UserRoute><AccountLayout><AccountSupport /></AccountLayout></UserRoute>} />
+
           {/* Admin Ecosystem */}
           <Route path="/admin" element={<AdminRoute><AdminLayout><AdminOverview /></AdminLayout></AdminRoute>} />
           <Route path="/admin/products" element={<AdminRoute><AdminLayout><AdminProducts /></AdminLayout></AdminRoute>} />
@@ -87,7 +117,7 @@ function AppContent() {
           <Route path="/admin/featured" element={<AdminRoute><AdminLayout><AdminFeatured /></AdminLayout></AdminRoute>} />
         </Routes>
       </main>
-      {!isAdminPath && <Footer />}
+      {!isAdminPath && !isAccountPath && <Footer />}
     </div>
   );
 }

@@ -36,9 +36,55 @@ export interface UserProfile {
   photoURL: string;
   role: 'super-admin' | 'admin' | 'moderator' | 'support' | 'customer';
   status: 'active' | 'suspended' | 'banned';
+  phone?: string;
+  language?: string;
+  timezone?: string;
   createdAt: any;
   lastLogin?: any;
   provider?: string;
+}
+
+export interface Address {
+  id: string;
+  fullName: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  isDefault: boolean;
+  type: 'shipping' | 'billing';
+}
+
+export interface PaymentMethod {
+  id: string;
+  cardType: string;
+  last4: string;
+  expiryDate: string;
+  isDefault: boolean;
+  holderName: string;
+}
+
+export interface WishlistItem {
+  productId: string;
+  addedAt: any;
+}
+
+export interface ActivityLog {
+  id: string;
+  type: 'order' | 'security' | 'profile' | 'wishlist' | 'system';
+  description: string;
+  metadata?: Record<string, any>;
+  createdAt: any;
+}
+
+export interface NotificationSettings {
+  email: boolean;
+  sms: boolean;
+  push: boolean;
+  promotional: boolean;
+  orderUpdates: boolean;
 }
 
 export interface OrderItem {

@@ -14,7 +14,6 @@ import {
   X,
   Truck,
   Image,
-  LogOut,
   Info,
   Store
 } from 'lucide-react';
@@ -66,7 +65,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [recentNotifications, setRecentNotifications] = useState<any[]>([]);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     // Listen for new pending orders as "notifications"
@@ -154,13 +153,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Store size={20} />
             <span className="font-bold text-sm">Exit Dashboard</span>
            </Link>
-           <button 
-            onClick={logout}
-            className="flex items-center space-x-3 w-full px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all"
-           >
-            <LogOut size={20} />
-            <span className="font-bold text-sm">System Logout</span>
-           </button>
         </div>
       </aside>
 
@@ -213,13 +205,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <Store size={20} />
                   <span className="font-bold text-sm">Exit Dashboard</span>
                 </Link>
-                <button 
-                  onClick={() => { logout(); setSidebarOpen(false); }}
-                  className="flex items-center space-x-3 w-full px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                >
-                  <LogOut size={20} />
-                  <span className="font-bold text-sm">System Logout</span>
-                </button>
               </div>
             </div>
             <div 
@@ -313,8 +298,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <p className="text-xs font-bold text-[#141414]">{user?.displayName}</p>
                 <p className="text-[10px] font-bold text-[#00A650] uppercase tracking-widest leading-none mt-1">Admin Access</p>
               </div>
-              <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-white shadow-sm ring-1 ring-gray-100">
-                <img src={user?.photoURL || ''} alt="Admin" className="w-full h-full object-cover" />
+              <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-white shadow-sm ring-1 ring-gray-100 flex items-center justify-center bg-gray-50">
+                {user?.photoURL ? (
+                  <img src={user.photoURL} alt="Admin" className="w-full h-full object-cover" />
+                ) : (
+                  <Users size={20} className="text-gray-300" />
+                )}
               </div>
             </div>
           </div>

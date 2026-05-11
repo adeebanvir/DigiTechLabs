@@ -103,6 +103,47 @@
         "createdAt": { "type": "string", "format": "date-time" }
       }
     },
+    "Address": {
+      "title": "User Address",
+      "description": "Shipping or billing address details.",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string" },
+        "phone": { "type": "string" },
+        "street": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "postalCode": { "type": "string" },
+        "country": { "type": "string" },
+        "isDefault": { "type": "boolean" },
+        "type": { "type": "string", "enum": ["shipping", "billing"] }
+      },
+      "required": ["fullName", "street", "city", "country"]
+    },
+    "PaymentMethod": {
+      "title": "Payment Method",
+      "description": "Saved payment card details (masked).",
+      "type": "object",
+      "properties": {
+        "cardType": { "type": "string" },
+        "last4": { "type": "string" },
+        "expiryDate": { "type": "string" },
+        "holderName": { "type": "string" },
+        "isDefault": { "type": "boolean" }
+      },
+      "required": ["last4", "cardType", "expiryDate"]
+    },
+    "ActivityLog": {
+      "title": "Activity Log",
+      "description": "Historical record of user actions.",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["order", "security", "profile", "wishlist", "system"] },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "description", "createdAt"]
+    },
     "Media": {
       "title": "Media Asset",
       "description": "Uploaded images and assets for use across the site.",
@@ -123,6 +164,22 @@
     "users/{userId}": {
       "schema": "User",
       "description": "User profiles and role assignments."
+    },
+    "users/{userId}/addresses/{addressId}": {
+      "schema": "Address",
+      "description": "User-specific shipping and billing addresses."
+    },
+    "users/{userId}/payments/{paymentId}": {
+      "schema": "PaymentMethod",
+      "description": "User-specific saved payment methods."
+    },
+    "users/{userId}/wishlist/{productId}": {
+      "schema": "Product",
+      "description": "User-specific wishlist items."
+    },
+    "users/{userId}/activity/{activityId}": {
+      "schema": "ActivityLog",
+      "description": "User-specific activity history logs."
     },
     "products/{productId}": {
       "schema": "Product",

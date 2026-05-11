@@ -19,6 +19,7 @@ interface AuthContextType {
   loginWithGoogle: () => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<void>;
   registerWithEmail: (email: string, password: string, displayName: string) => Promise<void>;
+  updateUserProfile: (updates: any) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -30,22 +31,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
+    const unsubscribe = onAuthStateChanged(auth, async (currUser) => {
+      setUser(currUser);
+      if (currUser) {
         // Sync user to Firestore
-        const userRef = doc(db, 'users', user.uid);
+        const userRef = doc(db, 'users', currUser.uid);
         const userSnap = await getDoc(userRef);
         
-        const providerId = user.providerData[0]?.providerId || 'password';
+        const providerId = currUser.providerData[0]?.providerId || 'password';
 
         if (!userSnap.exists()) {
           await setDoc(userRef, {
-            userId: user.uid,
-            displayName: user.displayName || emailToName(user.email || ''),
-            email: user.email,
-            photoURL: user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}&background=00A650&color=fff`,
-            role: user.email === 'adeebanvir09@gmail.com' ? 'admin' : 'customer',
+            userId: currUser.uid,
+            displayName: currUser.displayName || emailToName(currUser.email || ''),
+            email: currUser.email,
+            photoURL: currUser.photoURL || `https://ui-avatars.com/api/?name=${currUser.displayName || currUser.email}&background=00A650&color=fff`,
+            role: currUser.email === 'adeebanvir09@gmail.com' ? 'admin' : 'customer',
             status: 'active',
             provider: providerId,
             createdAt: serverTimestamp(),
@@ -60,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }, { merge: true });
         }
         
-        const role = userSnap.exists() ? userSnap.data()?.role : (user.email === 'adeebanvir09@gmail.com' ? 'admin' : 'customer');
+        const role = userSnap.exists() ? userSnap.data()?.role : (currUser.email === 'adeebanvir09@gmail.com' ? 'admin' : 'customer');
         setIsAdmin(role === 'admin' || role === 'super-admin');
       } else {
         setIsAdmin(false);
@@ -89,12 +90,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await updateProfile(userCredential.user, { displayName });
   };
 
+  const updateUserProfile = async (updates: any) => {
+    if (!auth.currentUser) return;
+    
+    // Update Firebase Auth profile
+    const profileUpdates: any = {};
+    if (updates.displayName) profileUpdates.displayName = updates.displayName;
+    if (updates.photoURL) profileUpdates.photoURL = updates.photoURL;
+    
+    if (Object.keys(profileUpdates).length > 0) {
+      await updateProfile(auth.currentUser, profileUpdates);
+    }
+
+    // Update Firestore user document
+    const userRef = doc(db, 'users', auth.currentUser.uid);
+    await setDoc(userRef, {
+      ...updates,
+      updatedAt: serverTimestamp(),
+    }, { merge: true });
+
+    // Refresh local user state
+    setUser({ ...auth.currentUser });
+  };
+
   const logout = async () => {
     await signOut(auth);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAdmin, loginWithGoogle, loginWithEmail, registerWithEmail, logout }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, loginWithGoogle, loginWithEmail, registerWithEmail, updateUserProfile, logout }}>
       {children}
     </AuthContext.Provider>
   );
