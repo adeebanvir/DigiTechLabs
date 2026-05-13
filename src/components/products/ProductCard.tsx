@@ -61,7 +61,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.name}
           </h3>
         </Link>
-        <p className="hidden md:block text-gray-500 text-sm line-clamp-2 mb-6 leading-relaxed">
+        <p className="text-gray-500 text-sm line-clamp-4 mb-6 leading-relaxed h-[5.7rem] overflow-hidden">
           {product.description}
         </p>
 

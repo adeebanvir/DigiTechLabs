@@ -112,11 +112,26 @@ service cloud.firestore {
              data.uploadedBy == request.auth.uid;
     }
 
+    function isValidSetting(data) {
+      return data.whatWeAreTitle is string &&
+             data.whatWeAreHighlight is string &&
+             data.whatWeAreDescription is string &&
+             data.offers is list &&
+             data.get('limitBanners', false) is bool &&
+             data.updatedAt == request.time;
+    }
+
     // --- COLLECTION RULES ---
     
     // Connection test document
     match /test/connection {
       allow read: if true;
+    }
+
+    // Settings (Public Read)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // USERS (Pillar 6: PII isolation implicitly handled by isOwner/isAdmin)

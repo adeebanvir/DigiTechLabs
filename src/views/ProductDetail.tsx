@@ -100,7 +100,7 @@ export default function ProductDetail() {
                   </span>
                 )}
               </div>
-              <p className="text-gray-600 text-lg leading-relaxed">
+              <p className="text-gray-600 text-lg leading-relaxed line-clamp-4 h-[7.3rem] overflow-hidden">
                 {product.description}
               </p>
             </div>

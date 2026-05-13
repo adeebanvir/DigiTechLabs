@@ -87,13 +87,15 @@ export default function AdminCategories() {
           <h1 className="text-3xl font-bold text-[#141414] tracking-tight">Category Architecture</h1>
           <p className="text-gray-500 font-medium">Define and organize your product hierarchy.</p>
         </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="bg-[#141414] text-white px-6 py-3 rounded-2xl font-bold flex items-center justify-center hover:bg-[#00A650] transition-all shadow-lg shadow-black/10"
-        >
-          <Plus size={20} className="mr-2" />
-          Define Category
-        </button>
+        <div className="flex items-center space-x-3">
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-[#141414] text-white px-6 py-3 rounded-2xl font-bold flex items-center justify-center hover:bg-[#0081C9] transition-all shadow-lg shadow-black/10"
+          >
+            <Plus size={20} className="mr-2" />
+            Define Category
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

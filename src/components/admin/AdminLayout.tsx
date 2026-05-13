@@ -15,7 +15,8 @@ import {
   Truck,
   Image,
   Info,
-  Store
+  Store,
+  Settings
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
@@ -106,6 +107,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { to: '/admin/orders', icon: <ShoppingBag size={20} />, label: 'Orders', badge: unreadCount > 0 ? unreadCount.toString() : undefined },
         { to: '/admin/users', icon: <Users size={20} />, label: 'Users' },
         { to: '/admin/media', icon: <Image size={20} />, label: 'Media' },
+        { to: '/admin/settings', icon: <Settings size={20} />, label: 'Site Content' },
       ]
     }
   ];

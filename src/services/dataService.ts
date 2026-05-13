@@ -14,7 +14,7 @@ import {
   setDoc
 } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../lib/firebase';
-import { Product, Category, Order, Address, PaymentMethod, ActivityLog, UserProfile } from '../types';
+import { Product, Category, Order, Address, PaymentMethod, ActivityLog, UserProfile, AppSetting } from '../types';
 
 export const userService = {
   async getUserProfile(userId: string): Promise<UserProfile | null> {
@@ -347,6 +347,32 @@ export const accountService = {
       });
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, `users/${userId}/activity`);
+    }
+  }
+};
+
+export const settingsService = {
+  async getSettings(id: string = 'home'): Promise<AppSetting | null> {
+    try {
+      const snap = await getDoc(doc(db, 'settings', id));
+      if (snap.exists()) {
+        return { id: snap.id, ...snap.data() } as AppSetting;
+      }
+      return null;
+    } catch (error) {
+      handleFirestoreError(error, OperationType.GET, `settings/${id}`);
+      return null;
+    }
+  },
+
+  async updateSettings(id: string, data: Partial<AppSetting>): Promise<void> {
+    try {
+      await setDoc(doc(db, 'settings', id), {
+        ...data,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `settings/${id}`);
     }
   }
 };

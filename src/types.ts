@@ -123,3 +123,22 @@ export interface Coupon {
   usageCount: number;
   isActive: boolean;
 }
+
+export interface Banner {
+  id: string;
+  imageUrl: string;
+  link: string;
+  title: string;
+  createdAt?: any;
+}
+
+export interface AppSetting {
+  id: string;
+  whatWeAreTitle: string;
+  whatWeAreHighlight: string;
+  whatWeAreDescription: string;
+  offers: string[];
+  banners: Banner[];
+  limitBanners?: boolean;
+  updatedAt: any;
+}

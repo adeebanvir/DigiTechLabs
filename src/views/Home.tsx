@@ -1,16 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Star, ArrowRight, Zap, ShieldCheck, Truck, RotateCcw, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Star, ArrowRight, Zap, ShieldCheck, Truck, RotateCcw, Loader2, ChevronLeft, ChevronRight, Laptop, Headphones, Glasses, Keyboard, Gamepad2, Watch, Home as HomeIcon, Shield, Monitor } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Product } from '../types';
-import { productService } from '../services/dataService';
+import { Product, AppSetting } from '../types';
+import { productService, settingsService } from '../services/dataService';
 import ProductCard from '../components/products/ProductCard';
+import { useAuth } from '../context/AuthContext';
+
+const DEFAULT_BANNERS = [
+  {
+    id: '1',
+    title: 'Spring Collection 2026',
+    imageUrl: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&q=80&w=1200',
+    link: '/shop?category=Audio',
+    createdAt: new Date('2026-01-01')
+  },
+  {
+    id: '2',
+    title: 'Elite Gaming Gear',
+    imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=600',
+    link: '/shop?category=Gaming',
+    createdAt: new Date('2026-01-02')
+  },
+  {
+    id: '3',
+    title: 'Smart Office Pro',
+    imageUrl: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=600',
+    link: '/shop?category=Work',
+    createdAt: new Date('2026-01-03')
+  },
+  {
+    id: '4',
+    title: 'Next-Gen Wearables',
+    imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600',
+    link: '/shop?category=Wearables',
+    createdAt: new Date('2026-01-04')
+  },
+  {
+    id: '5',
+    title: 'Immersive Visuals',
+    imageUrl: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&q=80&w=600',
+    link: '/shop?category=Visual',
+    createdAt: new Date('2026-01-05')
+  }
+];
+
+const DEFAULT_SETTINGS: Omit<AppSetting, 'id'> = {
+  whatWeAreTitle: 'Simple Gear.',
+  whatWeAreHighlight: 'Better Life.',
+  whatWeAreDescription: 'We curate high-performance, minimalist tech that integrates seamlessly into your daily workflow. No clutter, just quality.',
+  offers: ['New Arrivals', 'Best Sellers', 'Flash Sale', 'Innovation', 'Spring Collection', 'Echo Series', 'Pro Grade', 'Limited Edition'],
+  banners: DEFAULT_BANNERS,
+  limitBanners: false,
+  updatedAt: new Date()
+};
 
 export default function Home() {
+  const { isAdmin } = useAuth();
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [trendingProducts, setTrendingProducts] = useState<Product[]>([]);
+  const [newArrivals, setNewArrivals] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [settings, setSettings] = useState<AppSetting | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingTrending, setLoadingTrending] = useState(true);
+  const [loadingAll, setLoadingAll] = useState(true);
+  const [loadingSettings, setLoadingSettings] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
@@ -28,6 +83,7 @@ export default function Home() {
 
   useEffect(() => {
     productService.getFeaturedProducts().then(data => {
+      // ... (existing seeding logic)
       if (data.length === 0) {
         // Seed some high-end products if the DB is empty
         const initialProducts: Omit<Product, 'id'>[] = [
@@ -171,7 +227,7 @@ export default function Home() {
             category: 'Infrastructure',
             image: 'https://images.unsplash.com/photo-1558239023-500742f1cf68?auto=format&fit=crop&q=80&w=600',
             rating: 4.9,
-            reviews: 12,
+            reviews: 128,
             isReviewsEnabled: true,
             isFeatured: true,
             stock: 15,
@@ -179,6 +235,80 @@ export default function Home() {
             sku: 'INF-SHB',
             features: ['WiFi 7', 'Local Computing', 'Threat Detection'],
             specs: { 'CPU': 'Quad-core AI', 'RAM': '16GB', 'Storage': '1TB NVMe' }
+          },
+          {
+            productId: 'ultra-wide-monitor-z',
+            name: 'UltraWide Monitor Z',
+            description: '49-inch curved display for the ultimate multitasking and immersive gaming experience.',
+            price: 1199.99,
+            discount: 150,
+            category: 'Desktop',
+            image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=600',
+            rating: 4.9,
+            reviews: 210,
+            isReviewsEnabled: true,
+            isFeatured: true,
+            isBestSeller: true,
+            stock: 20,
+            status: 'published',
+            sku: 'DSK-UWZ',
+            features: ['240Hz Refresh', 'DUAL QHD', 'VESA Mount'],
+            specs: { 'Panel': 'Mini-LED', 'Brightness': '1000 nits', 'Ports': 'HDMI 2.1, DP 1.4' }
+          },
+          {
+            productId: 'mechanical-kb-pro',
+            name: 'Mechanical KB Pro',
+            description: 'Custom-tuned mechanical keyboard with hot-swappable switches and gasket mount.',
+            price: 189.00,
+            discount: 0,
+            category: 'Work',
+            image: 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&q=80&w=600',
+            rating: 4.8,
+            reviews: 340,
+            isReviewsEnabled: true,
+            isFeatured: true,
+            stock: 100,
+            status: 'published',
+            sku: 'WORK-MKP',
+            features: ['Gasket Mount', 'QMK/VIA', 'RGB Per-key'],
+            specs: { 'Switches': 'Gateron Oil Kings', 'Material': 'Aluminum', 'Weight': '2.4kg' }
+          },
+          {
+            productId: 'portable-ssd-nitro',
+            name: 'Portable SSD Nitro',
+            description: 'Credit card sized SSD with insane read/write speeds for creators on the go.',
+            price: 159.00,
+            discount: 20,
+            category: 'Power',
+            image: 'https://images.unsplash.com/photo-1597740985671-2a8a3b80502e?auto=format&fit=crop&q=80&w=600',
+            rating: 4.7,
+            reviews: 87,
+            isReviewsEnabled: true,
+            isFeatured: false,
+            isBestSeller: true,
+            stock: 200,
+            status: 'published',
+            sku: 'PWR-SSD-N',
+            features: ['USB 4.0', 'Drop Proof', 'Encryption'],
+            specs: { 'Speed': '3500MB/s', 'Capacity': '2TB', 'Weight': '40g' }
+          },
+          {
+            productId: 'smart-ring-v1',
+            name: 'Smart Ring V1',
+            description: 'Discreet health monitoring in a premium titanium ring. Sleep, heart rate, and more.',
+            price: 299.00,
+            discount: 0,
+            category: 'Wearables',
+            image: 'https://images.unsplash.com/photo-1601287113101-72944b2f883b?auto=format&fit=crop&q=80&w=600',
+            rating: 4.6,
+            reviews: 54,
+            isReviewsEnabled: true,
+            isFeatured: true,
+            stock: 45,
+            status: 'published',
+            sku: 'WEAR-SRV',
+            features: ['7-Day Battery', 'Titanium build', 'No Subscription'],
+            specs: { 'Material': 'Grade 5 Titanium', 'Waterproof': '100m', 'Sensors': 'PPG, Temp' }
           }
         ];
         
@@ -201,6 +331,58 @@ export default function Home() {
       setLoadingTrending(false);
     });
 
+    // Fetch all products for the mini-shop and new arrivals
+    productService.getAllProducts().then(all => {
+      setAllProducts(all);
+      
+      // Calculate new arrivals (latest 5)
+      const sorted = [...all].sort((a, b) => {
+        const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+        const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+        return dateB.getTime() - dateA.getTime();
+      });
+      setNewArrivals(sorted.slice(0, 5));
+      
+      setLoadingAll(false);
+    });
+
+    // Fetch Settings
+    settingsService.getSettings('home').then(data => {
+      if (!data) {
+        if (isAdmin) {
+          settingsService.updateSettings('home', DEFAULT_SETTINGS).then(() => {
+            settingsService.getSettings('home').then(refreshed => {
+              setSettings(refreshed);
+              setLoadingSettings(false);
+            }).catch(() => {
+              setSettings({ id: 'home', ...DEFAULT_SETTINGS } as AppSetting);
+              setLoadingSettings(false);
+            });
+          }).catch(() => {
+            setSettings({ id: 'home', ...DEFAULT_SETTINGS } as AppSetting);
+            setLoadingSettings(false);
+          });
+        } else {
+          setSettings({ id: 'home', ...DEFAULT_SETTINGS } as AppSetting);
+          setLoadingSettings(false);
+        }
+      } else {
+        // Double check for empty banners/offers even if doc exists
+        const mergedData = {
+          ...data,
+          banners: (data.banners && data.banners.length > 0) ? data.banners : DEFAULT_BANNERS,
+          offers: (data.offers && data.offers.length > 0) ? data.offers : DEFAULT_SETTINGS.offers,
+          limitBanners: data.limitBanners ?? false
+        };
+        setSettings(mergedData);
+        setLoadingSettings(false);
+      }
+    }).catch(err => {
+      console.error("Failed to fetch settings, using defaults", err);
+      setSettings({ id: 'home', ...DEFAULT_SETTINGS } as AppSetting);
+      setLoadingSettings(false);
+    });
+
     // Handle hash scrolling on initial load
     if (window.location.hash === '#featured-innovations') {
       setTimeout(() => {
@@ -218,59 +400,198 @@ export default function Home() {
 
   return (
     <div className="pt-20">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[#F5F5F0] py-24 lg:py-32">
+      {/* Dynamic Banners Section (Screenshot Style) */}
+      <section className="bg-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <motion.div 
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="z-20 text-left"
-            >
-              <span className="inline-block px-4 py-1.5 bg-[#00A650]/10 text-[#00A650] text-[11px] font-bold uppercase tracking-widest rounded-full mb-8">
-                Innovation First
-              </span>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold tracking-tighter text-[#141414] leading-[0.9] mb-8">
-                The Future<br /> 
-                Is <span className="text-[#00A650]">Minimal.</span>
-              </h1>
-              <p className="text-xl text-gray-600 mb-10 max-w-lg leading-relaxed">
-                Experience high-performance gadgets designed to simplify your life. Discover the DigiTechLabs ecosystem today.
-              </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Promotional Banners */}
+            {settings?.banners?.slice().sort((a, b) => {
+              const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+              const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+              return dateB.getTime() - dateA.getTime();
+            }).slice(0, settings?.limitBanners ? 4 : undefined).map((banner, i) => (
+              <motion.div 
+                key={banner.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="h-[200px] relative rounded-2xl overflow-hidden group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300"
+              >
+                <Link to={banner.link} className="block w-full h-full">
+                  <img 
+                    src={banner.imageUrl} 
+                    alt={banner.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-4">
+                    <h3 className="text-white text-lg font-bold tracking-tight mb-1">{banner.title}</h3>
+                    <div className="text-white/80 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center">
+                      Shop Now <ArrowRight className="ml-2 w-3 h-3 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link 
-                  to="/shop" 
-                  className="px-8 py-4 bg-[#141414] text-white rounded-2xl font-bold hover:bg-[#00A650] transition-all duration-300 flex items-center justify-center group shadow-xl hover:shadow-[#00A650]/20"
-                >
-                  Shop Now
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <Link 
-                  to="/about" 
-                  className="px-8 py-4 border-2 border-gray-200 text-[#141414] rounded-2xl font-bold hover:border-[#141414] transition-all duration-300 text-center"
-                >
-                  Our Story
-                </Link>
+            {(!settings?.banners || settings.banners.length === 0) && (
+              <div className="h-[200px] flex items-center justify-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Offers Coming Soon</p>
               </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="relative flex justify-center"
-            >
-              <div className="absolute inset-0 bg-[#00A650]/10 rounded-[4rem] blur-3xl -z-10 transform scale-75 translate-x-10 translate-y-10" />
-              <img 
-                src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=1000" 
-                alt="Featured Gadget"
-                className="w-[80%] h-auto rounded-[3rem] shadow-2xl"
-                referrerPolicy="no-referrer"
-              />
-            </motion.div>
+            )}
           </div>
+        </div>
+      </section>
+
+      {/* Top Categories (Screenshot Style) */}
+      <section className="bg-[#F8F9FA] py-12 border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-sm font-black uppercase tracking-[0.3em] text-[#141414] border-l-4 border-[#00A650] pl-4">Top Categories</h2>
+            <Link to="/shop" className="text-xs font-bold text-[#00A650] uppercase tracking-widest hover:underline">See All</Link>
+          </div>
+          <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-2 md:gap-4">
+            {[
+              { name: 'Laptop', icon: <Laptop className="w-8 h-8" />, label: 'LAPTOP' },
+              { name: 'Audio', icon: <Headphones className="w-8 h-8" />, label: 'AUDIO' },
+              { name: 'Visual', icon: <Glasses className="w-8 h-8" />, label: 'VISUAL' },
+              { name: 'Power', icon: <Zap className="w-8 h-8" />, label: 'POWER' },
+              { name: 'Work', icon: <Keyboard className="w-8 h-8" />, label: 'WORK' },
+              { name: 'Gaming', icon: <Gamepad2 className="w-8 h-8" />, label: 'GAMING' },
+              { name: 'Wearables', icon: <Watch className="w-8 h-8" />, label: 'WEARABLES' },
+              { name: 'Smart Home', icon: <HomeIcon className="w-8 h-8" />, label: 'SMART...' },
+              { name: 'Security', icon: <Shield className="w-8 h-8" />, label: 'SECURITY' },
+              { name: 'Desktop', icon: <Monitor className="w-8 h-8" />, label: 'DESKTOP' }
+            ].map((cat, i) => (
+              <Link 
+                key={cat.name} 
+                to={`/shop?category=${cat.name}`}
+                className="group flex flex-col items-center p-4 bg-white rounded-[2rem] border border-gray-100/50 hover:border-[#0081C9] hover:shadow-xl transition-all duration-500 shadow-sm"
+              >
+                <div className="mb-4 text-[#141414] transition-all transform group-hover:scale-110 group-hover:text-[#0081C9]">
+                  {cat.icon}
+                </div>
+                <span className="text-[10px] font-black text-[#0081C9] uppercase tracking-[0.15em] text-center">{cat.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Miniaturized Shop Hero */}
+      <section className="pt-12 pb-8 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-6 gap-6">
+            <div className="max-w-xl">
+              <motion.span 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-[#00A650] text-[11px] font-bold uppercase tracking-[0.2em] mb-4 block"
+              >
+                Limited Offers & What We Are
+              </motion.span>
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tighter text-[#141414] leading-[0.9]"
+              >
+                {settings?.whatWeAreTitle || 'Simple Gear.'}<br />
+                <span className="text-[#00A650]">{settings?.whatWeAreHighlight || 'Better Life.'}</span>
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="mt-3 text-lg text-gray-500 leading-relaxed"
+              >
+                {settings?.whatWeAreDescription || 'We curate high-performance, minimalist tech that integrates seamlessly into your daily workflow. No clutter, just quality.'}
+              </motion.p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {(settings?.offers || ['New Arrivals', 'Best Sellers', 'Flash Sale', 'Innovation']).map((tag, i) => (
+                <motion.span
+                  key={tag}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 + (i * 0.1) }}
+                  className="px-4 py-2 bg-gray-50 text-gray-500 rounded-full text-xs font-bold uppercase tracking-widest border border-gray-100"
+                >
+                  {tag}
+                </motion.span>
+              ))}
+            </div>
+          </div>
+
+          {loadingAll ? (
+             <div className="py-24 flex flex-col items-center justify-center text-gray-400">
+                <Loader2 className="w-10 h-10 animate-spin mb-4" />
+                <p className="text-xs font-bold uppercase tracking-widest">Opening the Vault...</p>
+              </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+              {allProducts.slice(0, itemsPerPage * 4).map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: (index % itemsPerPage) * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                   <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </div>
+          )}
+          
+          <div className="mt-8 text-center">
+            <Link 
+              to="/shop" 
+              className="inline-flex items-center px-8 py-4 bg-[#141414] text-white rounded-2xl font-bold hover:bg-[#00A650] transition-all duration-300 group"
+            >
+              Explore Full Catalog
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* New Arrivals Section */}
+      <section className="py-24 bg-[#F8F9FA]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
+            <div>
+              <span className="text-[#00A650] text-[11px] font-bold uppercase tracking-widest mb-4 block">
+                Fresh From The Lab
+              </span>
+              <h2 className="text-4xl lg:text-5xl font-bold tracking-tight text-[#141414]">
+                New <br /> Arrivals.
+              </h2>
+            </div>
+            <Link to="/shop" className="text-[#141414] font-bold hover:text-[#00A650] transition-colors flex items-center">
+              View All New Gear <ArrowRight className="ml-2 w-4 h-4" />
+            </Link>
+          </div>
+
+          {loadingAll ? (
+            <div className="py-12 flex flex-col items-center justify-center text-gray-400">
+              <Loader2 className="w-10 h-10 animate-spin mb-4" />
+              <p className="text-xs font-bold uppercase tracking-widest">Unboxing Latest Gear...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+              {newArrivals.map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

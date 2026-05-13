@@ -1,4 +1,4 @@
-import { Product } from './types';
+import { Product, Category } from './types';
 
 export const PRODUCTS: Product[] = [
   {
@@ -68,7 +68,7 @@ export const PRODUCTS: Product[] = [
     name: 'Zenith Pocket 12',
     description: 'A compact smartphone powerhouse featuring our latest Pro-Lens system and Super-Reflex display.',
     price: 899.00,
-    category: 'Smaprtphones',
+    category: 'Smart Home',
     image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=1000',
     rating: 4.7,
     reviews: 56,
@@ -98,7 +98,7 @@ export const PRODUCTS: Product[] = [
     name: 'NeoCharger Pad',
     description: 'Ultra-thin wireless charging pad with intelligent heat management and fast charging for all devices.',
     price: 49.99,
-    category: 'Accessories',
+    category: 'Power',
     image: 'https://images.unsplash.com/photo-1586810165616-94c631fc2f79?auto=format&fit=crop&q=80&w=1000',
     rating: 4.6,
     reviews: 210,
@@ -123,4 +123,17 @@ export const PRODUCTS: Product[] = [
     discount: 10,
     isReviewsEnabled: true
   }
+];
+
+export const DEFAULT_CATEGORIES: Omit<Category, 'id'>[] = [
+  { name: 'Laptop', slug: 'laptop', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1000' },
+  { name: 'Audio', slug: 'audio', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=1000' },
+  { name: 'Visual', slug: 'visual', image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=1000' },
+  { name: 'Power', slug: 'power', image: 'https://images.unsplash.com/photo-1586810165616-94c631fc2f79?auto=format&fit=crop&q=80&w=1000' },
+  { name: 'Work', slug: 'work', image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=1000' },
+  { name: 'Gaming', slug: 'gaming', image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1000' },
+  { name: 'Wearables', slug: 'wearables', image: 'https://images.unsplash.com/photo-1544117518-30dd5f27304d?auto=format&fit=crop&q=80&w=1000' },
+  { name: 'Smart Home', slug: 'smart-home', image: 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=1000' },
+  { name: 'Security', slug: 'security', image: 'https://images.unsplash.com/photo-1557597774-9d2739f85a94?auto=format&fit=crop&q=80&w=1000' },
+  { name: 'Desktop', slug: 'desktop', image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=1000' }
 ];

@@ -26,6 +26,7 @@ import AdminCategories from './views/admin/AdminCategories';
 import AdminInventory from './views/admin/AdminInventory';
 import AdminMedia from './views/admin/AdminMedia';
 import AdminFeatured from './views/admin/AdminFeatured';
+import AdminSettings from './views/admin/AdminSettings';
 import AccountLayout from './components/account/AccountLayout';
 import AccountOverview from './views/account/AccountOverview';
 import AccountOrders from './views/account/AccountOrders';
@@ -115,6 +116,7 @@ function AppContent() {
           <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
           <Route path="/admin/media" element={<AdminRoute><AdminLayout><AdminMedia /></AdminLayout></AdminRoute>} />
           <Route path="/admin/featured" element={<AdminRoute><AdminLayout><AdminFeatured /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/settings" element={<AdminRoute><AdminLayout><AdminSettings /></AdminLayout></AdminRoute>} />
         </Routes>
       </main>
       {!isAdminPath && !isAccountPath && <Footer />}

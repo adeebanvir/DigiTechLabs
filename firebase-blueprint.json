@@ -158,9 +158,38 @@
         "uploadedBy": { "type": "string" }
       },
       "required": ["url", "publicId"]
+    },
+    "AppSetting": {
+      "title": "Application Setting",
+      "description": "Global application configuration.",
+      "type": "object",
+      "properties": {
+        "whatWeAreTitle": { "type": "string" },
+        "whatWeAreHighlight": { "type": "string" },
+        "whatWeAreDescription": { "type": "string" },
+        "offers": { "type": "array" },
+        "banners": { 
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "imageUrl": { "type": "string" },
+              "link": { "type": "string" },
+              "title": { "type": "string" }
+            }
+          }
+        },
+        "limitBanners": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
     }
   },
   "firestore": {
+    "settings/{settingId}": {
+      "schema": "AppSetting",
+      "description": "Global site settings and configuration."
+    },
     "users/{userId}": {
       "schema": "User",
       "description": "User profiles and role assignments."
