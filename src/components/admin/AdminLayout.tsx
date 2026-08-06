@@ -102,11 +102,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       ]
     },
     {
-      title: 'Operations',
+      title: 'Operations & Legal',
       items: [
         { to: '/admin/orders', icon: <ShoppingBag size={20} />, label: 'Orders', badge: unreadCount > 0 ? unreadCount.toString() : undefined },
         { to: '/admin/users', icon: <Users size={20} />, label: 'Users' },
         { to: '/admin/media', icon: <Image size={20} />, label: 'Media' },
+        { to: '/admin/faq', icon: <Info size={20} />, label: 'Manage FAQs' },
+        { to: '/admin/policies', icon: <Tag size={20} />, label: 'Manage Policies' },
+        { to: '/admin/tax', icon: <Truck size={20} />, label: 'Tax Rates' },
         { to: '/admin/settings', icon: <Settings size={20} />, label: 'Site Content' },
       ]
     }

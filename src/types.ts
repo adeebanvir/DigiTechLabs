@@ -141,4 +141,43 @@ export interface AppSetting {
   banners: Banner[];
   limitBanners?: boolean;
   updatedAt: any;
+  contactTitle?: string;
+  contactSubtitle?: string;
+  supportEmail?: string;
+  partnershipsEmail?: string;
+  phone?: string;
+  address?: string;
+  responseTime?: string;
+  featuredInnovationId?: string;
+}
+
+export interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+  order?: number;
+}
+
+export interface PolicyItem {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  updatedAt?: any;
+}
+
+export interface TaxRate {
+  id: string;
+  country: string;
+  ratePercent: number;
+}
+
+export interface ProductReview {
+  id: string;
+  productId: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: any;
 }

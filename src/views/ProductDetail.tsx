@@ -1,8 +1,9 @@
 import { useParams, Link } from 'react-router-dom';
-import { Product } from '../types';
-import { productService } from '../services/dataService';
+import { Product, ProductReview } from '../types';
+import { productService, reviewService } from '../services/dataService';
 import { useCart } from '../context/CartContext';
-import { Star, ArrowLeft, Shield, Truck, RotateCcw, Check, Plus, Minus, Loader2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Star, ArrowLeft, Shield, Truck, RotateCcw, Check, Plus, Minus, Loader2, MessageSquare, Send, User } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
 import ProductCard from '../components/products/ProductCard';
@@ -10,11 +11,23 @@ import ProductCard from '../components/products/ProductCard';
 export default function ProductDetail() {
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
+  const [reviewsList, setReviewsList] = useState<ProductReview[]>([]);
+  const [newRating, setNewRating] = useState(5);
+  const [newComment, setNewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewSuccess, setReviewSuccess] = useState(false);
+
+  const loadReviews = async (productId: string) => {
+    const data = await reviewService.getProductReviews(productId);
+    setReviewsList(data);
+  };
+
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -23,11 +36,40 @@ export default function ProductDetail() {
         if (data) {
           const all = await productService.getAllProducts();
           setRelatedProducts(all.filter(p => p.category === data.category && p.id !== data.id).slice(0, 3));
+          loadReviews(data.id);
         }
         setLoading(false);
       });
     }
   }, [id]);
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!product || !newComment.trim()) return;
+
+    setSubmittingReview(true);
+    try {
+      await reviewService.addReview(product.id, {
+        userId: user?.uid || 'guest',
+        userName: user?.displayName || 'Verified Tech Customer',
+        rating: newRating,
+        comment: newComment.trim()
+      });
+
+      // Reload product to get recalculated rating
+      const updatedP = await productService.getProductById(product.id);
+      if (updatedP) setProduct(updatedP);
+
+      setNewComment('');
+      setReviewSuccess(true);
+      setTimeout(() => setReviewSuccess(false), 3000);
+      loadReviews(product.id);
+    } catch (err) {
+      console.error("Failed to submit review", err);
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -180,6 +222,113 @@ export default function ProductDetail() {
                 <span className="text-[#141414] font-bold">{value}</span>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Customer Reviews Section */}
+        <div className="mt-24 pt-24 border-t border-gray-100 space-y-12">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h3 className="text-3xl font-bold tracking-tight text-[#141414]">Customer Reviews.</h3>
+              <p className="text-gray-500 text-sm mt-1">Verified ratings and real feedback from our tech community.</p>
+            </div>
+            <div className="flex items-center gap-4 bg-gray-50 px-6 py-4 rounded-3xl border border-gray-100 shrink-0">
+              <div className="flex text-[#00A650]">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star key={s} size={20} className={s <= Math.round(product.rating) ? "fill-current" : "text-gray-200"} />
+                ))}
+              </div>
+              <div className="border-l border-gray-200 pl-4">
+                <p className="text-2xl font-bold text-[#141414] leading-none">{product.rating.toFixed(1)}</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{product.reviews} Total Reviews</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            {/* Reviews List */}
+            <div className="lg:col-span-7 space-y-6">
+              {reviewsList.length > 0 ? (
+                reviewsList.map((rev) => (
+                  <div key={rev.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center font-bold text-sm">
+                          <User size={18} />
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900 text-sm">{rev.userName}</p>
+                          <p className="text-[10px] text-gray-400">
+                            {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : 'Verified Buyer'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex text-[#00A650]">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star key={s} size={14} className={s <= rev.rating ? "fill-current" : "text-gray-200"} />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-gray-600 text-sm leading-relaxed">{rev.comment}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="p-10 bg-gray-50 rounded-3xl text-center space-y-3">
+                  <MessageSquare className="w-10 h-10 mx-auto text-gray-300" />
+                  <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">No customer reviews yet</p>
+                  <p className="text-xs text-gray-400">Be the first to leave a review for this innovation!</p>
+                </div>
+              )}
+            </div>
+
+            {/* Write Review Form */}
+            <div className="lg:col-span-5 bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm h-fit space-y-6">
+              <h4 className="font-bold text-lg text-[#141414]">Write a Review</h4>
+              {reviewSuccess ? (
+                <div className="p-4 bg-green-50 text-[#00A650] rounded-2xl text-xs font-bold text-center">
+                  🎉 Thank you! Your review has been submitted and average rating updated.
+                </div>
+              ) : (
+                <form onSubmit={handleReviewSubmit} className="space-y-5">
+                  <div>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Overall Rating</label>
+                    <div className="flex gap-2 text-gray-300">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => setNewRating(s)}
+                          className="p-1 hover:scale-110 transition-transform"
+                        >
+                          <Star size={24} className={s <= newRating ? "text-[#00A650] fill-[#00A650]" : "text-gray-200"} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Your Review</label>
+                    <textarea 
+                      rows={4}
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Share your experience with this tech..."
+                      className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-xs font-medium focus:bg-white focus:border-[#00A650] outline-none resize-none"
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submittingReview}
+                    className="w-full py-4 bg-[#141414] text-white font-bold text-xs rounded-2xl hover:bg-[#00A650] transition-all shadow-lg flex items-center justify-center gap-2"
+                  >
+                    {submittingReview ? <Loader2 className="animate-spin" size={16} /> : <Send size={16} />}
+                    <span>Submit Review</span>
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
         </div>
 

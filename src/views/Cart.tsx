@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { orderService } from '../services/dataService';
-import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, ShieldCheck, Truck, Loader2 } from 'lucide-react';
+import { orderService, addressService, paymentService, taxService } from '../services/dataService';
+import { Address, PaymentMethod, TaxRate } from '../types';
+import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, ShieldCheck, Truck, Loader2, MapPin, CreditCard, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -13,9 +14,99 @@ export default function Cart() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
+  const [savedPayments, setSavedPayments] = useState<PaymentMethod[]>([]);
+  const [taxRates, setTaxRates] = useState<TaxRate[]>([]);
+  
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
+  const [selectedPaymentId, setSelectedPaymentId] = useState<string>('');
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    country: 'United States',
+    cardNumber: '',
+    expDate: '',
+    cvc: ''
+  });
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.displayName || '',
+        email: user.email || ''
+      }));
+
+      addressService.getAddresses(user.uid).then(addrs => {
+        setSavedAddresses(addrs);
+        const defaultAddr = addrs.find(a => a.isDefault) || addrs[0];
+        if (defaultAddr) {
+          setSelectedAddressId(defaultAddr.id);
+          setFormData(prev => ({
+            ...prev,
+            name: defaultAddr.fullName,
+            phone: defaultAddr.phone,
+            address: `${defaultAddr.street}, ${defaultAddr.city}, ${defaultAddr.state} ${defaultAddr.postalCode}, ${defaultAddr.country}`,
+            country: defaultAddr.country
+          }));
+        }
+      });
+
+      paymentService.getPaymentMethods(user.uid).then(pmts => {
+        setSavedPayments(pmts);
+        const defaultPmt = pmts.find(p => p.isDefault) || pmts[0];
+        if (defaultPmt) {
+          setSelectedPaymentId(defaultPmt.id);
+          setFormData(prev => ({
+            ...prev,
+            cardNumber: `•••• •••• •••• ${defaultPmt.last4}`,
+            expDate: defaultPmt.expiryDate,
+            cvc: '***'
+          }));
+        }
+      });
+    }
+
+    taxService.getTaxRates().then(rates => setTaxRates(rates));
+  }, [user]);
+
+  // Tax calculation based on selected address country (VPN-proof)
+  const matchedTaxRate = taxRates.find(r => r.country.toLowerCase() === (formData.country || 'united states').toLowerCase());
+  const taxPercent = matchedTaxRate ? matchedTaxRate.ratePercent : 8.0;
+
   const shipping = cartTotal > 500 ? 0 : 25;
-  const tax = cartTotal * 0.08;
+  const tax = cartTotal * (taxPercent / 100);
   const grandTotal = cartTotal + shipping + tax;
+
+  const handleSelectAddress = (addrId: string) => {
+    setSelectedAddressId(addrId);
+    const addr = savedAddresses.find(a => a.id === addrId);
+    if (addr) {
+      setFormData(prev => ({
+        ...prev,
+        name: addr.fullName,
+        phone: addr.phone,
+        address: `${addr.street}, ${addr.city}, ${addr.state} ${addr.postalCode}, ${addr.country}`,
+        country: addr.country
+      }));
+    }
+  };
+
+  const handleSelectPayment = (pmtId: string) => {
+    setSelectedPaymentId(pmtId);
+    const pmt = savedPayments.find(p => p.id === pmtId);
+    if (pmt) {
+      setFormData(prev => ({
+        ...prev,
+        cardNumber: `•••• •••• •••• ${pmt.last4}`,
+        expDate: pmt.expiryDate,
+        cvc: '***'
+      }));
+    }
+  };
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,20 +118,14 @@ export default function Cart() {
 
     setIsProcessing(true);
     try {
-      const formData = new FormData(e.currentTarget as HTMLFormElement);
-      const address = formData.get('address') as string;
-      const email = formData.get('email') as string;
-      const phone = formData.get('phone') as string;
-      const name = formData.get('name') as string;
-      
       await orderService.createOrder(
         user.uid,
         cart.map(item => ({ id: item.id, name: item.name, price: item.price, quantity: item.quantity })),
         grandTotal,
-        address,
-        email,
-        phone,
-        name
+        formData.address,
+        formData.email,
+        formData.phone,
+        formData.name
       );
 
       setIsSuccess(true);
@@ -189,7 +274,7 @@ export default function Cart() {
                   <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between text-gray-600 font-medium">
-                  <span>Tax (8%)</span>
+                  <span>Tax ({taxPercent}% - {formData.country})</span>
                   <span>${tax.toFixed(2)}</span>
                 </div>
                 <div className="pt-4 border-t border-gray-100 flex justify-between items-end">
@@ -210,39 +295,113 @@ export default function Cart() {
                 </button>
               ) : (
                 <form onSubmit={handleCheckout} className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
+                  {/* Saved Address Auto-fill */}
+                  {savedAddresses.length > 0 && (
+                    <div className="p-3 bg-green-50/50 border border-green-200 rounded-2xl space-y-1">
+                      <label className="text-[10px] font-bold text-[#00A650] uppercase tracking-widest flex items-center gap-1.5">
+                        <MapPin size={12} /> Auto-fill Saved Shipping Address
+                      </label>
+                      <select 
+                        value={selectedAddressId}
+                        onChange={(e) => handleSelectAddress(e.target.value)}
+                        className="w-full bg-white border border-gray-200 rounded-xl py-2 px-3 text-xs font-bold text-gray-800 outline-none"
+                      >
+                        {savedAddresses.map(a => (
+                          <option key={a.id} value={a.id}>
+                            {a.fullName} - {a.street}, {a.city} ({a.country})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Saved Payment Auto-fill */}
+                  {savedPayments.length > 0 && (
+                    <div className="p-3 bg-blue-50/50 border border-blue-200 rounded-2xl space-y-1">
+                      <label className="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-1.5">
+                        <CreditCard size={12} /> Auto-fill Saved Payment Method
+                      </label>
+                      <select 
+                        value={selectedPaymentId}
+                        onChange={(e) => handleSelectPayment(e.target.value)}
+                        className="w-full bg-white border border-gray-200 rounded-xl py-2 px-3 text-xs font-bold text-gray-800 outline-none"
+                      >
+                        {savedPayments.map(p => (
+                          <option key={p.id} value={p.id}>
+                            {p.cardType} ending in {p.last4} ({p.expiryDate})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                   <input 
                     required
                     name="email"
                     type="email" 
-                    defaultValue={user?.email || ''}
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="Email Address" 
-                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]"
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 text-xs font-medium focus:outline-none focus:border-[#00A650]"
                   />
                   <input 
                     required
                     name="name"
                     type="text" 
-                    defaultValue={user?.displayName || ''}
-                    placeholder="Full Name (Required for Identity)" 
-                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Full Name" 
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 text-xs font-medium focus:outline-none focus:border-[#00A650]"
                   />
                   <input 
                     required
                     name="phone"
                     type="tel" 
-                    placeholder="Phone Number (Required)" 
-                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="Phone Number" 
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 text-xs font-medium focus:outline-none focus:border-[#00A650]"
                   />
                   <input 
                     required
                     name="address"
                     type="text" 
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     placeholder="Shipping Address" 
-                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]"
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 text-xs font-medium focus:outline-none focus:border-[#00A650]"
                   />
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Country for Tax Calculation</label>
+                    <input 
+                      required
+                      name="country"
+                      type="text" 
+                      value={formData.country}
+                      onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                      placeholder="Country e.g. United States, France, United Kingdom" 
+                      className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 text-xs font-bold text-[#00A650] focus:outline-none focus:border-[#00A650]"
+                    />
+                  </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <input required name="expDate" type="text" placeholder="Exp Date" className="bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]" />
-                    <input required name="cvc" type="text" placeholder="CVC" className="bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 focus:outline-none focus:border-[#00A650]" />
+                    <input 
+                      required 
+                      name="expDate" 
+                      type="text" 
+                      value={formData.expDate}
+                      onChange={(e) => setFormData({ ...formData, expDate: e.target.value })}
+                      placeholder="Exp Date (MM/YY)" 
+                      className="bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 text-xs font-medium focus:outline-none focus:border-[#00A650]" 
+                    />
+                    <input 
+                      required 
+                      name="cvc" 
+                      type="text" 
+                      value={formData.cvc}
+                      onChange={(e) => setFormData({ ...formData, cvc: e.target.value })}
+                      placeholder="CVC" 
+                      className="bg-gray-50 border border-gray-100 rounded-xl py-3 px-4 text-xs font-medium focus:outline-none focus:border-[#00A650]" 
+                    />
                   </div>
                   <button 
                     type="submit"

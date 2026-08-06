@@ -14,6 +14,7 @@ import Cart from './views/Cart';
 import About from './views/About';
 import Contact from './views/Contact';
 import Login from './views/Login';
+import PolicyDetail from './views/PolicyDetail';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -27,6 +28,9 @@ import AdminInventory from './views/admin/AdminInventory';
 import AdminMedia from './views/admin/AdminMedia';
 import AdminFeatured from './views/admin/AdminFeatured';
 import AdminSettings from './views/admin/AdminSettings';
+import AdminFAQ from './views/admin/AdminFAQ';
+import AdminPolicies from './views/admin/AdminPolicies';
+import AdminTax from './views/admin/AdminTax';
 import AccountLayout from './components/account/AccountLayout';
 import AccountOverview from './views/account/AccountOverview';
 import AccountOrders from './views/account/AccountOrders';
@@ -95,6 +99,8 @@ function AppContent() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/policies/:slug" element={<PolicyDetail />} />
+          <Route path="/policies" element={<PolicyDetail />} />
           
           {/* Account Ecosystem */}
           <Route path="/account" element={<UserRoute><AccountLayout><AccountOverview /></AccountLayout></UserRoute>} />
@@ -102,10 +108,10 @@ function AppContent() {
           <Route path="/account/wishlist" element={<UserRoute><AccountLayout><AccountWishlist /></AccountLayout></UserRoute>} />
           <Route path="/account/addresses" element={<UserRoute><AccountLayout><AccountAddresses /></AccountLayout></UserRoute>} />
           <Route path="/account/payments" element={<UserRoute><AccountLayout><AccountPayments /></AccountLayout></UserRoute>} />
-          <Route path="/account/security" element={<UserRoute><AccountLayout><AccountSecurity /></AccountLayout></UserRoute>} />
+          <Route path="/account/security" element={<UserRoute><AccountLayout><AccountSettings /></AccountLayout></UserRoute>} />
           <Route path="/account/notifications" element={<UserRoute><AccountLayout><AccountNotifications /></AccountLayout></UserRoute>} />
           <Route path="/account/settings" element={<UserRoute><AccountLayout><AccountSettings /></AccountLayout></UserRoute>} />
-          <Route path="/account/support" element={<UserRoute><AccountLayout><AccountSupport /></AccountLayout></UserRoute>} />
+          <Route path="/account/support" element={<UserRoute><AccountLayout><AccountSettings /></AccountLayout></UserRoute>} />
 
           {/* Admin Ecosystem */}
           <Route path="/admin" element={<AdminRoute><AdminLayout><AdminOverview /></AdminLayout></AdminRoute>} />
@@ -116,6 +122,9 @@ function AppContent() {
           <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
           <Route path="/admin/media" element={<AdminRoute><AdminLayout><AdminMedia /></AdminLayout></AdminRoute>} />
           <Route path="/admin/featured" element={<AdminRoute><AdminLayout><AdminFeatured /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/faq" element={<AdminRoute><AdminLayout><AdminFAQ /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/policies" element={<AdminRoute><AdminLayout><AdminPolicies /></AdminLayout></AdminRoute>} />
+          <Route path="/admin/tax" element={<AdminRoute><AdminLayout><AdminTax /></AdminLayout></AdminRoute>} />
           <Route path="/admin/settings" element={<AdminRoute><AdminLayout><AdminSettings /></AdminLayout></AdminRoute>} />
         </Routes>
       </main>

@@ -115,9 +115,6 @@ export default function AccountOverview() {
           <p className="text-gray-500 mt-1">Check your latest activity and subscription stats.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="px-5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
-            Download Report
-          </button>
           <Link to="/shop" className="px-5 py-2.5 bg-[#00A650] text-white rounded-xl text-sm font-semibold hover:bg-[#009245] transition-colors shadow-lg shadow-[#00A650]/20 flex items-center gap-2">
             <ShoppingBag size={16} />
             Shop Now

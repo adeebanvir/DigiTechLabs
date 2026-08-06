@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Save, Loader2, Plus, X, Tag, Info, Image as ImageIcon, Link as LinkIcon, Edit2 } from 'lucide-react';
+import { Save, Loader2, Plus, X, Tag, Info, Image as ImageIcon, Link as LinkIcon, Edit2, Mail } from 'lucide-react';
 import { AppSetting, Banner } from '../../types';
 import { settingsService } from '../../services/dataService';
 
@@ -58,7 +58,14 @@ export default function AdminSettings() {
           ...data,
           banners: (data.banners && data.banners.length > 0) ? data.banners : DEFAULT_BANNERS,
           offers: (data.offers && data.offers.length > 0) ? data.offers : ['New Arrivals', 'Best Sellers', 'Flash Sale', 'Innovation', 'Spring Collection', 'Echo Series', 'Pro Grade', 'Limited Edition'],
-          limitBanners: data.limitBanners ?? false
+          limitBanners: data.limitBanners ?? false,
+          contactTitle: data.contactTitle || "Let's Start a",
+          contactSubtitle: data.contactSubtitle || "Technical issues, partnership inquiries, or just sharing your tech vision—our experts are ready to listen.",
+          supportEmail: data.supportEmail || "assist@digitechlabs.com",
+          partnershipsEmail: data.partnershipsEmail || "growth@digitechlabs.com",
+          phone: data.phone || "+1 (888) DIGI-LAB",
+          address: data.address || "One Infinite Loop, Tech City",
+          responseTime: data.responseTime || "Currently active: 12-24 hour response window."
         });
       } else {
         setSettings({
@@ -69,7 +76,14 @@ export default function AdminSettings() {
             offers: ['New Arrivals', 'Best Sellers', 'Flash Sale', 'Innovation', 'Spring Collection', 'Echo Series', 'Pro Grade', 'Limited Edition'],
             banners: DEFAULT_BANNERS,
             limitBanners: false,
-            updatedAt: new Date()
+            updatedAt: new Date(),
+            contactTitle: "Let's Start a",
+            contactSubtitle: "Technical issues, partnership inquiries, or just sharing your tech vision—our experts are ready to listen.",
+            supportEmail: "assist@digitechlabs.com",
+            partnershipsEmail: "growth@digitechlabs.com",
+            phone: "+1 (888) DIGI-LAB",
+            address: "One Infinite Loop, Tech City",
+            responseTime: "Currently active: 12-24 hour response window."
         });
       }
       setLoading(false);
@@ -83,7 +97,14 @@ export default function AdminSettings() {
           offers: ['New Arrivals', 'Best Sellers', 'Flash Sale', 'Innovation', 'Spring Collection', 'Echo Series', 'Pro Grade', 'Limited Edition'],
           banners: DEFAULT_BANNERS,
           limitBanners: false,
-          updatedAt: new Date()
+          updatedAt: new Date(),
+          contactTitle: "Let's Start a",
+          contactSubtitle: "Technical issues, partnership inquiries, or just sharing your tech vision—our experts are ready to listen.",
+          supportEmail: "assist@digitechlabs.com",
+          partnershipsEmail: "growth@digitechlabs.com",
+          phone: "+1 (888) DIGI-LAB",
+          address: "One Infinite Loop, Tech City",
+          responseTime: "Currently active: 12-24 hour response window."
       });
       setLoading(false);
     });
@@ -373,6 +394,101 @@ export default function AdminSettings() {
             {settings?.offers.length === 0 && (
               <p className="text-sm text-gray-400 italic">No active tags listed.</p>
             )}
+          </div>
+        </div>
+
+        {/* Contact Customization Section */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="p-2 bg-emerald-500/10 text-[#00A650] rounded-xl">
+               <Mail size={18} />
+            </div>
+            <h3 className="font-bold text-[#141414]">Contact Center Hub</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Contact Header Title</label>
+              <input 
+                type="text" 
+                value={settings?.contactTitle || ''}
+                onChange={e => setSettings(prev => prev ? {...prev, contactTitle: e.target.value} : null)}
+                className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-[#00A650]/20 font-medium"
+                placeholder="e.g., Let's Start a"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Support Email Address</label>
+              <input 
+                type="email" 
+                value={settings?.supportEmail || ''}
+                onChange={e => setSettings(prev => prev ? {...prev, supportEmail: e.target.value} : null)}
+                className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-[#00A650]/20 font-medium text-[#00A650] font-sans"
+                placeholder="e.g., support@yourbrand.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Contact Header Subtitle</label>
+            <textarea 
+              rows={2}
+              value={settings?.contactSubtitle || ''}
+              onChange={e => setSettings(prev => prev ? {...prev, contactSubtitle: e.target.value} : null)}
+              className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-[#00A650]/20 font-medium resize-none"
+              placeholder="E.g., Technical issues, partnerships, or support requests..."
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Partnerships Email Address</label>
+              <input 
+                type="email" 
+                value={settings?.partnershipsEmail || ''}
+                onChange={e => setSettings(prev => prev ? {...prev, partnershipsEmail: e.target.value} : null)}
+                className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-[#00A650]/20 font-medium text-xs font-mono"
+                placeholder="e.g., partnerships@yourbrand.com"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Telephone Line</label>
+              <input 
+                type="text" 
+                value={settings?.phone || ''}
+                onChange={e => setSettings(prev => prev ? {...prev, phone: e.target.value} : null)}
+                className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-[#00A650]/20 font-medium text-sm"
+                placeholder="e.g., +1 (888) DIGI-LAB"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Response Speed Note</label>
+              <input 
+                type="text" 
+                value={settings?.responseTime || ''}
+                onChange={e => setSettings(prev => prev ? {...prev, responseTime: e.target.value} : null)}
+                className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-[#00A650]/20 font-medium text-sm text-amber-600"
+                placeholder="e.g., Active: 2-3 hour window"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Headquarters Address</label>
+            <input 
+              type="text" 
+              value={settings?.address || ''}
+              onChange={e => setSettings(prev => prev ? {...prev, address: e.target.value} : null)}
+              className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-[#00A650]/20 font-medium text-sm"
+              placeholder="e.g., One Infinite Loop, Tech City"
+              required
+            />
           </div>
         </div>
 

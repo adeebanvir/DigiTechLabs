@@ -228,13 +228,6 @@ export default function Navbar() {
                         <LayoutDashboard className="w-5 h-5" />
                       </Link>
                     )}
-                    <button 
-                      onClick={logout}
-                      className="p-2 text-gray-500 hover:text-red-500 transition-colors"
-                      title="Logout"
-                    >
-                      <LogOut className="w-5 h-5" />
-                    </button>
                     <Link to="/account" className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 flex-shrink-0 hover:ring-2 hover:ring-[#00A650]/20 transition-all flex items-center justify-center bg-gray-50">
                       {user.photoURL ? (
                         <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
@@ -401,14 +394,7 @@ export default function Navbar() {
                   Admin Dashboard
                 </Link>
               )}
-              {user ? (
-                <button
-                  onClick={() => { logout(); setIsOpen(false); }}
-                  className="w-full text-left px-3 py-4 text-base font-medium text-red-500 hover:bg-gray-50 rounded-lg transition-colors"
-                >
-                  Logout
-                </button>
-              ) : (
+              {!user && (
                 <Link
                   to="/login"
                   onClick={() => setIsOpen(false)}

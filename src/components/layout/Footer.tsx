@@ -51,8 +51,8 @@ export default function Footer() {
                   Innovations
                 </Link>
               </li>
-              <li><Link to="/shop" className="hover:text-[#00A650] transition-colors">New Arrivals</Link></li>
-              <li><Link to="/shop" className="hover:text-[#00A650] transition-colors">Best Sellers</Link></li>
+              <li><Link to="/shop?filter=new" className="hover:text-[#00A650] transition-colors">New Arrivals</Link></li>
+              <li><Link to="/shop?filter=bestseller" className="hover:text-[#00A650] transition-colors">Best Sellers</Link></li>
             </ul>
           </div>
 
@@ -62,9 +62,9 @@ export default function Footer() {
             <ul className="space-y-1.5 text-gray-400 text-[11px]">
               <li><Link to="/contact" className="hover:text-[#00A650] transition-colors">Contact Us</Link></li>
               <li><Link to="/about" className="hover:text-[#00A650] transition-colors">About Story</Link></li>
-              <li><a href="#" className="hover:text-[#00A650] transition-colors">Shipping Policy</a></li>
-              <li><a href="#" className="hover:text-[#00A650] transition-colors">Refunds & Returns</a></li>
-              <li><a href="#" className="hover:text-[#00A650] transition-colors">Warranty Info</a></li>
+              <li><Link to="/policies/shipping" className="hover:text-[#00A650] transition-colors">Shipping Policy</Link></li>
+              <li><Link to="/policies/refunds" className="hover:text-[#00A650] transition-colors">Refunds & Returns</Link></li>
+              <li><Link to="/policies/warranty" className="hover:text-[#00A650] transition-colors">Warranty Info</Link></li>
             </ul>
           </div>
 
@@ -88,9 +88,9 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-4 flex flex-col md:flex-row justify-between items-center text-gray-500 text-[9px] uppercase tracking-widest gap-2">
           <p>© 2026 DigiTechLabs. All rights reserved.</p>
           <div className="flex space-x-6">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-white transition-colors">Cookies</a>
+            <Link to="/policies/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link to="/policies/terms" className="hover:text-white transition-colors">Terms</Link>
+            <Link to="/policies/warranty" className="hover:text-white transition-colors">Cookies & Warranty</Link>
           </div>
         </div>
       </div>

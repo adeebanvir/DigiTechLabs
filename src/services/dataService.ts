@@ -212,6 +212,19 @@ export const orderService = {
   }
 };
 
+export const addressService = {
+  getAddresses: (userId: string) => accountService.getAddresses(userId),
+  addAddress: (userId: string, address: Omit<Address, 'id'>) => accountService.addAddress(userId, address),
+  updateAddress: (userId: string, addressId: string, address: Partial<Address>) => accountService.updateAddress(userId, addressId, address),
+  deleteAddress: (userId: string, addressId: string) => accountService.deleteAddress(userId, addressId)
+};
+
+export const paymentService = {
+  getPaymentMethods: (userId: string) => accountService.getPaymentMethods(userId),
+  addPaymentMethod: (userId: string, payment: Omit<PaymentMethod, 'id'>) => accountService.addPaymentMethod(userId, payment),
+  deletePaymentMethod: (userId: string, paymentId: string) => accountService.deletePaymentMethod(userId, paymentId)
+};
+
 export const accountService = {
   async getAddresses(userId: string): Promise<Address[]> {
     try {
@@ -373,6 +386,163 @@ export const settingsService = {
       }, { merge: true });
     } catch (error) {
       handleFirestoreError(error, OperationType.UPDATE, `settings/${id}`);
+    }
+  }
+};
+
+export const faqService = {
+  async getFAQs(): Promise<FAQItem[]> {
+    try {
+      const snap = await getDocs(collection(db, 'faqs'));
+      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as FAQItem));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.LIST, 'faqs');
+      return [];
+    }
+  },
+
+  async addFAQ(item: Omit<FAQItem, 'id'>): Promise<string> {
+    try {
+      const docRef = await addDoc(collection(db, 'faqs'), item);
+      return docRef.id;
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, 'faqs');
+      return '';
+    }
+  },
+
+  async updateFAQ(id: string, data: Partial<FAQItem>): Promise<void> {
+    try {
+      await updateDoc(doc(db, 'faqs', id), data);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `faqs/${id}`);
+    }
+  },
+
+  async deleteFAQ(id: string): Promise<void> {
+    try {
+      await deleteDoc(doc(db, 'faqs', id));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `faqs/${id}`);
+    }
+  }
+};
+
+export const policyService = {
+  async getPolicies(): Promise<PolicyItem[]> {
+    try {
+      const snap = await getDocs(collection(db, 'policies'));
+      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as PolicyItem));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.LIST, 'policies');
+      return [];
+    }
+  },
+
+  async getPolicyBySlug(slug: string): Promise<PolicyItem | null> {
+    try {
+      const q = query(collection(db, 'policies'), where('slug', '==', slug));
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        return { id: snap.docs[0].id, ...snap.docs[0].data() } as PolicyItem;
+      }
+      return null;
+    } catch (error) {
+      handleFirestoreError(error, OperationType.GET, `policies/${slug}`);
+      return null;
+    }
+  },
+
+  async savePolicy(slug: string, title: string, content: string): Promise<void> {
+    try {
+      const existing = await policyService.getPolicyBySlug(slug);
+      if (existing) {
+        await updateDoc(doc(db, 'policies', existing.id), {
+          title,
+          content,
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        await addDoc(collection(db, 'policies'), {
+          slug,
+          title,
+          content,
+          updatedAt: serverTimestamp()
+        });
+      }
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `policies/${slug}`);
+    }
+  }
+};
+
+export const taxService = {
+  async getTaxRates(): Promise<TaxRate[]> {
+    try {
+      const snap = await getDocs(collection(db, 'taxRates'));
+      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as TaxRate));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.LIST, 'taxRates');
+      return [];
+    }
+  },
+
+  async saveTaxRate(country: string, ratePercent: number): Promise<void> {
+    try {
+      const q = query(collection(db, 'taxRates'), where('country', '==', country));
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        await updateDoc(doc(db, 'taxRates', snap.docs[0].id), { ratePercent });
+      } else {
+        await addDoc(collection(db, 'taxRates'), { country, ratePercent });
+      }
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'taxRates');
+    }
+  },
+
+  async deleteTaxRate(id: string): Promise<void> {
+    try {
+      await deleteDoc(doc(db, 'taxRates', id));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `taxRates/${id}`);
+    }
+  }
+};
+
+export const reviewService = {
+  async getProductReviews(productId: string): Promise<ProductReview[]> {
+    try {
+      const snap = await getDocs(collection(db, `products/${productId}/reviews`));
+      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProductReview));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.LIST, `products/${productId}/reviews`);
+      return [];
+    }
+  },
+
+  async addReview(productId: string, review: Omit<ProductReview, 'id' | 'productId' | 'createdAt'>): Promise<void> {
+    try {
+      await addDoc(collection(db, `products/${productId}/reviews`), {
+        ...review,
+        productId,
+        createdAt: serverTimestamp()
+      });
+
+      // Recalculate and update product rating & review count
+      const product = await productService.getProductById(productId);
+      if (product) {
+        const currentCount = product.reviews || 0;
+        const currentRating = product.rating || 5;
+        const newCount = currentCount + 1;
+        const newRating = Number((((currentRating * currentCount) + review.rating) / newCount).toFixed(1));
+        await productService.updateProduct(productId, {
+          reviews: newCount,
+          rating: newRating
+        });
+      }
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, `products/${productId}/reviews`);
     }
   }
 };

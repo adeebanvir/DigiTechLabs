@@ -181,7 +181,14 @@
           }
         },
         "limitBanners": { "type": "boolean" },
-        "updatedAt": { "type": "string", "format": "date-time" }
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "contactTitle": { "type": "string" },
+        "contactSubtitle": { "type": "string" },
+        "supportEmail": { "type": "string" },
+        "partnershipsEmail": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "responseTime": { "type": "string" }
       }
     }
   },

@@ -794,7 +794,11 @@ export default function Home() {
             </h2>
             <div className="flex items-center justify-center space-x-2 text-[#00A650]">
               {[...Array(5)].map((_, i) => <Star key={i} className="w-6 h-6 fill-current" />)}
-              <span className="text-white font-bold ml-2">4.9/5 Average Rating</span>
+              <span className="text-white font-bold ml-2">
+                {allProducts.length > 0 
+                  ? (allProducts.reduce((acc, p) => acc + (p.rating || 5), 0) / allProducts.length).toFixed(1)
+                  : '4.9'}/5 Average Rating
+              </span>
             </div>
           </div>
 

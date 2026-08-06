@@ -37,13 +37,9 @@ const navItems = [
     { name: 'Addresses', path: '/account/addresses', icon: MapPin },
     { name: 'Payment Methods', path: '/account/payments', icon: CreditCard },
   ]},
-  { group: 'Security & App', items: [
-    { name: 'Security', path: '/account/security', icon: ShieldCheck },
+  { group: 'Security & Profile', items: [
+    { name: 'Settings & Security', path: '/account/settings', icon: Settings },
     { name: 'Notifications', path: '/account/notifications', icon: Bell },
-    { name: 'Account Settings', path: '/account/settings', icon: Settings },
-  ]},
-  { group: 'Support', items: [
-    { name: 'Support', path: '/account/support', icon: LifeBuoy },
   ]}
 ];
 
@@ -155,10 +151,17 @@ export default function AccountLayout({ children }: AccountLayoutProps) {
             ))}
           </nav>
 
-          <div className="mt-auto pt-8 border-t border-gray-100">
+          <div className="mt-auto pt-8 border-t border-gray-100 space-y-2">
             <button 
               onClick={handleLogout}
-              className="flex items-center gap-3 px-3 py-2.5 w-full text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2.5 w-full text-gray-700 font-bold hover:bg-[#00A650]/10 hover:text-[#00A650] rounded-xl transition-all duration-200"
+            >
+              <UserIcon size={18} />
+              <span className="text-[14px]">Change Account</span>
+            </button>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-3 py-2.5 w-full text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
             >
               <LogOut size={18} />
               <span className="text-[14px]">Log out</span>

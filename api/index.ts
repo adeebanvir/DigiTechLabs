@@ -92,6 +92,115 @@ async function startServer() {
     res.json({ status: "ok", message: "DigiTechLabs Backend operational." });
   });
 
+  // Contact Form Email Endpoint
+  app.post("/api/v1/contact/send", async (req, res) => {
+    const { name, email, subject, message, toEmail } = req.body;
+
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ error: "Missing required fields: name, email, subject, and message are required." });
+    }
+
+    const recipient = toEmail || "assist@digitechlabs.com";
+
+    console.log(`[Contact Form] Initiating contact email send:
+      - From: ${name} <${email}>
+      - To Support Email: ${recipient}
+      - Subject: ${subject}
+    `);
+
+    try {
+      const { default: nodemailer } = await import("nodemailer");
+
+      const host = process.env.SMTP_HOST;
+      const port = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587;
+      const secure = process.env.SMTP_SECURE === "true";
+      const user = process.env.SMTP_USER;
+      const pass = process.env.SMTP_PASS;
+
+      const emailSubject = `[Contact Form] ${subject}`;
+      const textContent = `You have received a new message from your store contact form:
+
+Sender Name: ${name}
+Sender Email: ${email}
+Subject: ${subject}
+
+Message:
+----------------------------------------
+${message}
+----------------------------------------
+
+This message was sent dynamically via the DigiTechLabs Contact Center.`;
+
+      const htmlContent = `
+        <div style="font-family: sans-serif; padding: 20px; color: #141414; max-width: 600px; border: 1px solid #f0f0f0; border-radius: 12px;">
+          <h2 style="color: #00A650; border-bottom: 2px solid #00A650; padding-bottom: 10px;">New Contact Message</h2>
+          <p><strong>From:</strong> ${name} (&lt;${email}&gt;)</p>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 20px; white-space: pre-wrap; font-size: 15px; border-left: 4px solid #00A650;">
+            ${message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}
+          </div>
+          <hr style="border: 0; border-top: 1px solid #eee; margin-top: 24px;" />
+          <p style="font-size: 11px; color: #a0a0a0;">Sent dynamically from DigiTechLabs Core Gateway.</p>
+        </div>
+      `;
+
+      if (!host || !user || !pass) {
+        // Simulated / Development / Preview Mode
+        console.warn(`[Mailer Warning] SMTP server not configured in credentials.
+          To send real emails, set the following environment variables in Settings:
+          - SMTP_HOST (e.g., mail.smtp2go.com, smtp.gmail.com)
+          - SMTP_PORT (e.g., 587 or 465)
+          - SMTP_USER
+          - SMTP_PASS
+          - SMTP_SECURE (true or false)
+        `);
+
+        console.log(`[Mailer Simulator] Message content log:\n\n${textContent}\n`);
+
+        return res.json({
+          status: "simulated",
+          message: "Contact form submitted successfully (simulated mode).",
+          email: {
+            to: recipient,
+            subject: emailSubject,
+            text: textContent
+          }
+        });
+      }
+
+      // Real integration config
+      const transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        auth: { user, pass }
+      });
+
+      const info = await transporter.sendMail({
+        from: `"${name}" <${user}>`, // Use authenticated SMTP user for authentication
+        replyTo: email, // Direct replies back to the sender
+        to: recipient,
+        subject: emailSubject,
+        text: textContent,
+        html: htmlContent
+      });
+
+      console.log(`[Mailer] Message index successfully dispatched: ${info.messageId}`);
+
+      return res.json({
+        status: "success",
+        message: "Your message has been sent to support successfully.",
+        messageId: info.messageId
+      });
+    } catch (error) {
+      console.error("[Mailer Error] Failed to send contact message:", error);
+      return res.status(500).json({
+        error: "Internal Mailer pipeline failed.",
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
   // Cloudinary Upload Route
   app.post("/api/v1/media/upload", upload.single('file'), async (req, res) => {
     try {

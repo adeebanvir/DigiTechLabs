@@ -118,7 +118,14 @@ service cloud.firestore {
              data.whatWeAreDescription is string &&
              data.offers is list &&
              data.get('limitBanners', false) is bool &&
-             data.updatedAt == request.time;
+             data.updatedAt == request.time &&
+             data.get('contactTitle', '') is string &&
+             data.get('contactSubtitle', '') is string &&
+             data.get('supportEmail', '') is string &&
+             data.get('partnershipsEmail', '') is string &&
+             data.get('phone', '') is string &&
+             data.get('address', '') is string &&
+             data.get('responseTime', '') is string;
     }
 
     // --- COLLECTION RULES ---
