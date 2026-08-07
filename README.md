@@ -4,7 +4,7 @@ A modern, high-performance e-commerce web application built with **React**, **Ta
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Frontend Framework**: React 18 with TypeScript & Vite
 - **Styling & UI**: Tailwind CSS, Lucide Icons, Framer Motion
@@ -16,27 +16,27 @@ A modern, high-performance e-commerce web application built with **React**, **Ta
 
 ## ✨ Key Features
 
-### 👤 Role-Based Access Control (RBAC)
+###  Role-Based Access Control (RBAC)
 - **Customer Portal**: Browse products, search, filter by category, manage cart, place orders, view order status, update account profile, and manage notifications.
 - **Admin Control Center**: Secure dashboard reserved for administrative users (`isAdmin = true`) with full access to manage store operations, product inventory, and site settings.
 
-### 📊 Admin Analytics & Operations
+###  Admin Analytics & Operations
 - **Interactive Dashboards**: Real-time sales charts, revenue metrics, order status breakdowns, and customer insights.
 - **Catalog Management**: Add, edit, and organize products, categories, stock inventory, tax rates, and store policies.
 - **Order Processing**: Review customer orders, update delivery statuses, and filter by payment state.
 - **Branding & Footer Control**: Dynamic controls to edit store tagline and manage up to 4 customizable social media links.
 
-### 🖼️ Media & Asset Management
+###  Media & Asset Management
 - **Cloudinary Integration**: Direct image uploads with instant preview, CDN optimization, and media library organization.
 
-### 🔄 Data Backup & Migration Suite
+###  Data Backup & Migration Suite
 - **JSON Export & Import**: One-click download of full database snapshots across all Firestore collections.
 - **Cross-Project Transfer**: Transfer all collections directly to a new Firebase project using target API keys.
 - **Cloudinary Asset Migration**: Re-upload image libraries directly to a target Cloudinary cloud account.
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 Follow these steps to set up the project locally:
 
@@ -96,7 +96,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 
 ---
 
-## 📦 Production Build
+##  Production Build
 
 To compile a production-ready bundle:
 
@@ -112,16 +112,10 @@ npm run preview
 
 ---
 
-## 🔒 Firebase Security Rules
+##  Firebase Security Rules
 
 Make sure to deploy the security rules provided in `firestore.rules` to your Firebase Firestore database to enforce role-based permissions:
 
 ```bash
 firebase deploy --only firestore:rules
 ```
-
----
-
-## 📄 License
-
-This project is open-source and available under the [MIT License](LICENSE).
