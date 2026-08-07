@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useLocation, Link } from 'react-router-dom';
+import Logo from '../Logo';
 import { 
   LayoutDashboard, 
   Package, 
@@ -98,13 +99,8 @@ export default function AccountLayout({ children }: AccountLayoutProps) {
       >
         <div className="p-8 flex flex-col h-full">
           <div className="flex items-center gap-3 mb-12">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#00A650] rounded-xl flex items-center justify-center shadow-lg shadow-[#00A650]/20 transition-transform hover:scale-105 active:scale-95">
-                <Cpu className="text-white w-6 h-6" />
-              </div>
-              <span className="font-bold text-xl tracking-tight text-[#111111]">
-                DigiTech<span className="text-[#00A650]">Labs</span>
-              </span>
+            <Link to="/" className="flex items-center">
+              <Logo className="h-10" />
             </Link>
             <button 
               onClick={() => setSidebarOpen(false)}

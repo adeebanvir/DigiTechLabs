@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Cpu, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Video, Mail, Share2 } from 'lucide-react';
+import Logo from '../Logo';
 import { settingsService } from '../../services/dataService';
 import { AppSetting, SocialLink } from '../../types';
 
@@ -39,13 +40,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {/* Brand */}
           <div className="space-y-3">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-[#00A650] rounded-lg flex items-center justify-center">
-                <Cpu className="text-white w-5 h-5" />
-              </div>
-              <span className="text-xl font-bold tracking-tight">
-                DigiTech<span className="text-[#00A650]">Labs</span>
-              </span>
+            <Link to="/" className="flex items-center">
+              <Logo variant="light" className="h-9" />
             </Link>
             <p className="text-gray-400 text-[11px] leading-relaxed max-w-xs">
               {footerDescription}

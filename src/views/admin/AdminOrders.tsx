@@ -118,7 +118,7 @@ export default function AdminOrders() {
         </head>
         <body>
           <div class="header">
-            <div class="logo">DIGITECH LABS</div>
+            <div class="logo"><img src="${window.location.origin}/logo.svg" alt="DigiTech Labs" style="height:40px;" /></div>
             <div>
               <p><strong>Invoice ID:</strong> #${order.id.toUpperCase()}</p>
               <p><strong>Date:</strong> ${order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString() : new Date().toLocaleDateString()}</p>

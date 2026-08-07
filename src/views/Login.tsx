@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../components/Logo';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Mail, 
@@ -79,13 +80,8 @@ export default function Login() {
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#00A650] opacity-5 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
           
           <div className="relative z-10">
-            <Link to="/" className="flex items-center space-x-3 mb-12">
-              <div className="w-12 h-12 bg-[#00A650] rounded-2xl flex items-center justify-center shadow-lg shadow-[#00A650]/20">
-                <Cpu className="text-white w-7 h-7" />
-              </div>
-              <span className="text-2xl font-bold tracking-tight">
-                DigiTech<span className="text-[#00A650]">Labs</span>
-              </span>
+            <Link to="/" className="inline-block mb-12">
+              <Logo variant="light" className="h-12" />
             </Link>
 
             <h2 className="text-4xl lg:text-5xl font-bold leading-tight mb-6">

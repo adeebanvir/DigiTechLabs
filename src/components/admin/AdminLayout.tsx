@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import Logo from '../Logo';
 import { db } from '../../lib/firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { 
@@ -120,13 +121,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar Desktop */}
       <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-gray-100 p-6 overflow-y-auto scrollbar-hide">
         <div className="flex items-center space-x-3 mb-10 px-2">
-          <div className="w-10 h-10 bg-[#141414] rounded-xl flex items-center justify-center text-white">
-            <LayoutDashboard size={24} />
-          </div>
-          <div>
-            <h2 className="font-bold text-[#141414] tracking-tighter">DigiTech Dashboard</h2>
-            <p className="text-[10px] font-bold text-[#00A650] uppercase tracking-widest">Enterprise v2.0</p>
-          </div>
+          <Link to="/" className="flex items-center">
+            <Logo className="h-10" />
+          </Link>
         </div>
 
         <nav className="flex-grow space-y-8">

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Menu, X, Cpu, LogIn, LogOut, LayoutDashboard, User as UserIcon, Search, Package, ChevronDown, Layers } from 'lucide-react';
+import Logo from '../Logo';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
@@ -73,13 +74,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-[#00A650] rounded-xl flex items-center justify-center">
-              <Cpu className="text-white w-6 h-6" />
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-[#141414]">
-              DigiTech<span className="text-[#00A650]">Labs</span>
-            </span>
+          <Link to="/" className="flex items-center">
+            <Logo className="h-10" />
           </Link>
 
           {/* Desktop Nav & Actions */}
