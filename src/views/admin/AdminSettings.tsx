@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Save, Loader2, Plus, X, Tag, Info, Image as ImageIcon, Link as LinkIcon, Edit2, Mail, Share2, Globe, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Video } from 'lucide-react';
 import { AppSetting, Banner, SocialLink } from '../../types';
 import { settingsService } from '../../services/dataService';
+import DataMigrationSuite from '../../components/admin/DataMigrationSuite';
 
 const SOCIAL_PLATFORMS = [
   { id: 'facebook', name: 'Facebook', icon: Facebook },
@@ -655,6 +656,9 @@ export default function AdminSettings() {
           </button>
         </div>
       </form>
+
+      {/* Data Export, Import & Cross-Project Migration Suite */}
+      <DataMigrationSuite />
     </div>
   );
 }
