@@ -1,0 +1,865 @@
+{
+  "timestamp": "2026-08-07T10:12:44.523Z",
+  "version": "1.0",
+  "collections": {
+    "products": [
+      {
+        "_docId": "cEDe7pVO5OY4QLIgMWeF",
+        "description": "its me ",
+        "status": "published",
+        "price": 10000,
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778344929,
+          "nanoseconds": 842000000
+        },
+        "category": "Accessories",
+        "isReviewsEnabled": true,
+        "discount": 0,
+        "name": "Myself",
+        "reviews": 0,
+        "sku": "SKU-CXB47G",
+        "features": [],
+        "specs": {},
+        "stock": 1,
+        "rating": 4.5,
+        "image": "https://res.cloudinary.com/dgxo2cd7l/image/upload/v1778344878/digitech_uploads/kv23te0h7ggdfbl2x1f2.png",
+        "productId": "006",
+        "isFeatured": true,
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778345883,
+          "nanoseconds": 864000000
+        }
+      },
+      {
+        "_docId": "dtl-001",
+        "price": 349.99,
+        "name": "Acoustic X1 Pro",
+        "reviews": 128,
+        "isBestSeller": true,
+        "features": [
+          "Hybrid Active Noise Cancellation",
+          "High-Resolution Audio",
+          "40-hour Battery Life",
+          "Touch Controls",
+          "Premium Memory Foam Earcups"
+        ],
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026515,
+          "nanoseconds": 704000000
+        },
+        "status": "published",
+        "description": "Precision-engineered wireless headphones with hybrid active noise cancellation and 40-hour battery life.",
+        "productId": "001",
+        "discount": 0,
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026515,
+          "nanoseconds": 704000000
+        },
+        "specs": {
+          "Frequency Response": "10Hz - 40kHz",
+          "Bluetooth Version": "5.2",
+          "Weight": "250g",
+          "Driver Size": "40mm",
+          "Charging Time": "2 Hours"
+        },
+        "rating": 4.9,
+        "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=1000",
+        "id": "dtl-001",
+        "sku": "DTL--001",
+        "category": "Audio",
+        "isReviewsEnabled": true,
+        "stock": 15
+      },
+      {
+        "_docId": "dtl-002",
+        "discount": 5,
+        "name": "Lumix Watch Series 4",
+        "price": 299,
+        "isReviewsEnabled": true,
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026515,
+          "nanoseconds": 915000000
+        },
+        "status": "published",
+        "description": "The ultimate fitness companion with advanced health monitoring and always-on retina display.",
+        "reviews": 85,
+        "category": "Wearables",
+        "isNew": true,
+        "id": "dtl-002",
+        "specs": {
+          "Case Material": "Aerospace Grade Aluminum",
+          "GPS": "Built-in",
+          "Display": "Retina AMOLED",
+          "Battery Life": "Up to 5 Days",
+          "Storage": "32GB"
+        },
+        "image": "https://images.unsplash.com/photo-1544117518-30dd5f27304d?auto=format&fit=crop&q=80&w=1000",
+        "features": [
+          "Heart Rate Monitor",
+          "ECG & Blood Oxygen Tracking",
+          "Always-on AMOLED Display",
+          "Water Resistant up to 50m",
+          "Seamless Mobile Integration"
+        ],
+        "productId": "002",
+        "stock": 24,
+        "sku": "DTL--002",
+        "rating": 4.8,
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026515,
+          "nanoseconds": 915000000
+        }
+      },
+      {
+        "_docId": "dtl-003",
+        "stock": 9,
+        "image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=1000",
+        "description": "A compact smartphone powerhouse featuring our latest Pro-Lens system and Super-Reflex display.",
+        "features": [
+          "50MP Triple Camera System",
+          "6.1-inch Super-Reflex Display",
+          "A15 Bionic Processor",
+          "Ceramic Shield Protection",
+          "Fast Wireless Charging"
+        ],
+        "reviews": 56,
+        "rating": 4.7,
+        "sku": "DTL--003",
+        "name": "Zenith Pocket 12",
+        "specs": {
+          "Camera": "50MP + 12MP + 12MP",
+          "Storage": "256GB",
+          "Battery": "4500mAh",
+          "Processor": "Octa-core 3.2GHz",
+          "RAM": "12GB"
+        },
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026516,
+          "nanoseconds": 109000000
+        },
+        "status": "published",
+        "isReviewsEnabled": true,
+        "category": "Smart Home",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026516,
+          "nanoseconds": 109000000
+        },
+        "productId": "003",
+        "price": 899,
+        "discount": 0,
+        "id": "dtl-003"
+      },
+      {
+        "_docId": "dtl-004",
+        "status": "published",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026516,
+          "nanoseconds": 296000000
+        },
+        "id": "dtl-004",
+        "name": "NeoCharger Pad",
+        "features": [
+          "15W Fast Wireless Charging",
+          "Universal Compatibility",
+          "Anti-slip Surface",
+          "Intelligent LED Indicator",
+          "Overheating Protection"
+        ],
+        "price": 49.99,
+        "isReviewsEnabled": true,
+        "discount": 10,
+        "stock": 50,
+        "image": "https://images.unsplash.com/photo-1586810165616-94c631fc2f79?auto=format&fit=crop&q=80&w=1000",
+        "rating": 4.6,
+        "productId": "004",
+        "specs": {
+          "Output": "Up to 15W",
+          "Dimensions": "10cm x 10cm x 0.8cm",
+          "Weight": "85g",
+          "Material": "Soft-touch silicone",
+          "Input": "USB-C"
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026516,
+          "nanoseconds": 296000000
+        },
+        "description": "Ultra-thin wireless charging pad with intelligent heat management and fast charging for all devices.",
+        "sku": "DTL--004",
+        "reviews": 210,
+        "category": "Power"
+      }
+    ],
+    "categories": [
+      {
+        "_docId": "accessories",
+        "slug": "accessories",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778138587,
+          "nanoseconds": 210000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778138587,
+          "nanoseconds": 210000000
+        },
+        "name": "Accessories"
+      },
+      {
+        "_docId": "audio",
+        "slug": "audio",
+        "name": "Audio",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026514,
+          "nanoseconds": 900000000
+        },
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026514,
+          "nanoseconds": 900000000
+        }
+      },
+      {
+        "_docId": "desktop",
+        "name": "Desktop",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652147,
+          "nanoseconds": 52000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652147,
+          "nanoseconds": 52000000
+        },
+        "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=1000",
+        "slug": "desktop"
+      },
+      {
+        "_docId": "gaming",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652146,
+          "nanoseconds": 512000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652146,
+          "nanoseconds": 512000000
+        },
+        "slug": "gaming",
+        "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1000",
+        "name": "Gaming"
+      },
+      {
+        "_docId": "laptop",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652145,
+          "nanoseconds": 893000000
+        },
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652145,
+          "nanoseconds": 893000000
+        },
+        "name": "Laptop",
+        "image": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=1000",
+        "slug": "laptop"
+      },
+      {
+        "_docId": "power",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026515,
+          "nanoseconds": 509000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026515,
+          "nanoseconds": 509000000
+        },
+        "name": "Power",
+        "slug": "power"
+      },
+      {
+        "_docId": "security",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652146,
+          "nanoseconds": 919000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652146,
+          "nanoseconds": 919000000
+        },
+        "slug": "security",
+        "image": "https://images.unsplash.com/photo-1557597774-9d2739f85a94?auto=format&fit=crop&q=80&w=1000",
+        "name": "Security"
+      },
+      {
+        "_docId": "smaprtphones",
+        "slug": "smaprtphones",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778138587,
+          "nanoseconds": 51000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778138587,
+          "nanoseconds": 51000000
+        },
+        "name": "Smaprtphones"
+      },
+      {
+        "_docId": "smart-home",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026515,
+          "nanoseconds": 302000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026515,
+          "nanoseconds": 302000000
+        },
+        "name": "Smart Home",
+        "slug": "smart-home"
+      },
+      {
+        "_docId": "test",
+        "image": "https://res.cloudinary.com/dgxo2cd7l/image/upload/v1778344878/digitech_uploads/kv23te0h7ggdfbl2x1f2.png",
+        "name": "test",
+        "slug": "test",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778346011,
+          "nanoseconds": 27000000
+        },
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778346011,
+          "nanoseconds": 27000000
+        }
+      },
+      {
+        "_docId": "test-2",
+        "name": "test 2",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778469679,
+          "nanoseconds": 974000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778469679,
+          "nanoseconds": 974000000
+        },
+        "slug": "test-2",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJ07zViZQnlsdE2_4SFpaGh9tATi6ZRhloZg&s"
+      },
+      {
+        "_docId": "test-3",
+        "name": "test 3",
+        "slug": "test-3",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778469889,
+          "nanoseconds": 169000000
+        },
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778469889,
+          "nanoseconds": 169000000
+        },
+        "image": ""
+      },
+      {
+        "_docId": "visual",
+        "name": "Visual",
+        "slug": "visual",
+        "image": "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=1000",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652146,
+          "nanoseconds": 45000000
+        },
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652146,
+          "nanoseconds": 45000000
+        }
+      },
+      {
+        "_docId": "wearables",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026515,
+          "nanoseconds": 99000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026515,
+          "nanoseconds": 99000000
+        },
+        "slug": "wearables",
+        "name": "Wearables"
+      },
+      {
+        "_docId": "work",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652146,
+          "nanoseconds": 365000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778652146,
+          "nanoseconds": 365000000
+        },
+        "image": "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=1000",
+        "name": "Work",
+        "slug": "work"
+      }
+    ],
+    "orders": [
+      {
+        "_docId": "2YAMKE7BvFx5RrM71uRz",
+        "email": "adeebanvir09@gmail.com",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778467650,
+          "nanoseconds": 150000000
+        },
+        "total": 10800,
+        "phone": "01829662051",
+        "items": [
+          {
+            "name": "Myself",
+            "id": "cEDe7pVO5OY4QLIgMWeF",
+            "price": 10000,
+            "quantity": 1
+          }
+        ],
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778467650,
+          "nanoseconds": 150000000
+        },
+        "customerName": "Anvir Adeeb",
+        "status": "pending",
+        "shippingAddress": "16/b, Chamelibagh, Shantinagar",
+        "userId": "79xeIynnEYUMreZutad73NDg1hf2"
+      },
+      {
+        "_docId": "ASQlMAZTqVUSwpLO3SRz",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778467373,
+          "nanoseconds": 175000000
+        },
+        "total": 10800,
+        "email": "adeebanvir@gmail.com",
+        "customerName": "Anvir Adeeb",
+        "phone": "01829662051",
+        "items": [
+          {
+            "quantity": 1,
+            "id": "cEDe7pVO5OY4QLIgMWeF",
+            "price": 10000,
+            "name": "Myself"
+          }
+        ],
+        "shippingAddress": "16/b, Chamelibagh, Shantinagar",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778502700,
+          "nanoseconds": 419000000
+        },
+        "status": "cancelled",
+        "userId": "PXzLMzewomW33DoouVbxpO62Oxy1"
+      },
+      {
+        "_docId": "CkqNUPVhQeBlxNzI7STH",
+        "status": "cancelled",
+        "total": 402.9892,
+        "userId": "79xeIynnEYUMreZutad73NDg1hf2",
+        "items": [
+          {
+            "name": "Acoustic X1 Pro",
+            "id": "dtl-001",
+            "quantity": 1,
+            "price": 349.99
+          }
+        ],
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778143637,
+          "nanoseconds": 138000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778143763,
+          "nanoseconds": 807000000
+        },
+        "address": "16/b, Chamelibagh, Shantinagar"
+      },
+      {
+        "_docId": "FLdFWcHH1GSCbw9TfKoc",
+        "total": 26081.254800000002,
+        "address": "miabari",
+        "status": "cancelled",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778170989,
+          "nanoseconds": 397000000
+        },
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778146680,
+          "nanoseconds": 876000000
+        },
+        "items": [
+          {
+            "quantity": 69,
+            "price": 349.99,
+            "name": "Acoustic X1 Pro",
+            "id": "dtl-001"
+          }
+        ],
+        "userId": "CicgM0XcB5PaxVNLRE2vyFfxYWC3"
+      },
+      {
+        "_docId": "QOFGGPYJt34xE6mfkKLb",
+        "shippingAddress": "16/B, Chamelibag,Shantinagar",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778170985,
+          "nanoseconds": 607000000
+        },
+        "customerName": "tanzina raihan",
+        "email": "tmethila85@gmail.com",
+        "status": "cancelled",
+        "total": 402.9892,
+        "userId": "KukA4RIWx1TXOYFBisGy5RZz9mg2",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778159465,
+          "nanoseconds": 845000000
+        },
+        "phone": "01912896387",
+        "items": [
+          {
+            "id": "dtl-001",
+            "price": 349.99,
+            "quantity": 1,
+            "name": "Acoustic X1 Pro"
+          }
+        ]
+      },
+      {
+        "_docId": "izXpDSoKDaifz0VidDgp",
+        "shippingAddress": "adeeb",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026150,
+          "nanoseconds": 496000000
+        },
+        "status": "pending",
+        "total": 78.98920000000001,
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786026150,
+          "nanoseconds": 496000000
+        },
+        "userId": "79xeIynnEYUMreZutad73NDg1hf2",
+        "email": "adeebanvir09@gmail.com",
+        "items": [
+          {
+            "price": 49.99,
+            "name": "NeoCharger Pad",
+            "quantity": 1,
+            "id": "dtl-004"
+          }
+        ],
+        "customerName": "Anvir Adeeb",
+        "phone": "123456789"
+      },
+      {
+        "_docId": "mj0dTp5RPqZ4FwB4Ugdk",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778144514,
+          "nanoseconds": 565000000
+        },
+        "shippingAddress": "16/b, Chamelibagh, Shantinagar",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778170992,
+          "nanoseconds": 59000000
+        },
+        "status": "cancelled",
+        "email": "adeebanvir09@gmail.com",
+        "customerName": "Anvir Adeeb",
+        "total": 970.92,
+        "userId": "79xeIynnEYUMreZutad73NDg1hf2",
+        "items": [
+          {
+            "name": "Zenith Pocket 12",
+            "id": "dtl-003",
+            "quantity": 1,
+            "price": 899
+          }
+        ],
+        "phone": "01829662051"
+      }
+    ],
+    "media": [
+      {
+        "_docId": "Ij2m6wzY0VqaRm11YVRC",
+        "fileType": "image/png",
+        "url": "https://res.cloudinary.com/dgxo2cd7l/image/upload/v1778344878/digitech_uploads/kv23te0h7ggdfbl2x1f2.png",
+        "fileSize": 165438,
+        "uploadedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778344879,
+          "nanoseconds": 385000000
+        },
+        "publicId": "digitech_uploads/kv23te0h7ggdfbl2x1f2",
+        "fileName": "Screenshot 2026-05-02 153806.png",
+        "uploadedBy": "79xeIynnEYUMreZutad73NDg1hf2"
+      },
+      {
+        "_docId": "izB3Tc8wcNIkf1AHwAWv",
+        "uploadedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1784266216,
+          "nanoseconds": 178000000
+        },
+        "uploadedBy": "79xeIynnEYUMreZutad73NDg1hf2",
+        "url": "https://res.cloudinary.com/dgxo2cd7l/image/upload/v1784266215/digitech_uploads/seehspdgvi29zdli8c3c.png",
+        "fileType": "image/png",
+        "fileName": "Gemini_Generated_Image_uwjkfluwjkfluwjk.png",
+        "publicId": "digitech_uploads/seehspdgvi29zdli8c3c",
+        "fileSize": 1616517
+      },
+      {
+        "_docId": "yXCJ6zlz1Jo6HFZD73AS",
+        "fileType": "image/jpeg",
+        "publicId": "digitech_uploads/f4i66hkscyf1kpcqhxna",
+        "url": "https://res.cloudinary.com/dgxo2cd7l/image/upload/v1778923244/digitech_uploads/f4i66hkscyf1kpcqhxna.jpg",
+        "uploadedBy": "79xeIynnEYUMreZutad73NDg1hf2",
+        "fileSize": 417760,
+        "uploadedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778923246,
+          "nanoseconds": 111000000
+        },
+        "fileName": "680997489_122114717799250889_5859794034011261667_n.jpg"
+      }
+    ],
+    "settings": [
+      {
+        "_docId": "home",
+        "whatWeAreHighlight": "Good Life.",
+        "whatWeAreTitle": "Simple Gear.",
+        "offers": [
+          "New Arrivals",
+          "Best Sellers",
+          "Flash Sale"
+        ],
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1779447835,
+          "nanoseconds": 93000000
+        },
+        "banners": [
+          {
+            "imageUrl": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=600",
+            "id": "2",
+            "title": "Elite Gaming Gear",
+            "link": "/shop?category=Gaming"
+          },
+          {
+            "title": "Smart Office Pro",
+            "id": "3",
+            "link": "/shop?category=Work",
+            "imageUrl": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=600"
+          },
+          {
+            "id": "4",
+            "link": "/shop?category=Wearables",
+            "title": "Next-Gen Wearables",
+            "imageUrl": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600"
+          },
+          {
+            "link": "/shop?category=Visual",
+            "id": "5",
+            "title": "Immersive Visuals",
+            "imageUrl": "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&q=80&w=600"
+          }
+        ],
+        "limitBanners": true,
+        "whatWeAreDescription": "We curate high-performance, minimalist tech that integrates seamlessly into your daily workflow.",
+        "id": "home"
+      }
+    ],
+    "faqs": [],
+    "policies": [],
+    "taxRates": [],
+    "innovations": [],
+    "banners": [],
+    "users": [
+      {
+        "_docId": "79xeIynnEYUMreZutad73NDg1hf2",
+        "userId": "79xeIynnEYUMreZutad73NDg1hf2",
+        "timezone": "UTC-8",
+        "photoURL": "https://lh3.googleusercontent.com/a/ACg8ocJCWciSIl6QrxhRjdFKcvgpa-XvZ6EPvU9hA1qb7QWlVTn5Baw=s96-c",
+        "displayName": "Anvir Adeeb",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778120401,
+          "nanoseconds": 709000000
+        },
+        "phone": "+1 (555) 000-9821",
+        "role": "admin",
+        "provider": "google.com",
+        "language": "jp",
+        "lastLogin": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786097435,
+          "nanoseconds": 322000000
+        },
+        "email": "adeebanvir09@gmail.com",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1786097435,
+          "nanoseconds": 322000000
+        }
+      },
+      {
+        "_docId": "CicgM0XcB5PaxVNLRE2vyFfxYWC3",
+        "email": "drynode@gmail.com",
+        "photoURL": "https://lh3.googleusercontent.com/a/ACg8ocKROQA0r6sslgmdPYjQsYTEex5Wmet0o3AH7VNoY_CMMfqUOno=s96-c",
+        "displayName": "DRYNODE Nihal",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778146622,
+          "nanoseconds": 845000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778146622,
+          "nanoseconds": 845000000
+        },
+        "role": "customer",
+        "userId": "CicgM0XcB5PaxVNLRE2vyFfxYWC3"
+      },
+      {
+        "_docId": "KukA4RIWx1TXOYFBisGy5RZz9mg2",
+        "photoURL": "https://lh3.googleusercontent.com/a/ACg8ocKRtswAMXrfERE0XXP267EdOxl386vgK6LfjFoGmaOdAi6INAhe=s96-c",
+        "email": "tmethila85@gmail.com",
+        "role": "customer",
+        "userId": "KukA4RIWx1TXOYFBisGy5RZz9mg2",
+        "displayName": "tanzina raihan",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778159404,
+          "nanoseconds": 741000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778159404,
+          "nanoseconds": 741000000
+        }
+      },
+      {
+        "_docId": "PXzLMzewomW33DoouVbxpO62Oxy1",
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778467182,
+          "nanoseconds": 180000000
+        },
+        "lastLogin": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778467182,
+          "nanoseconds": 180000000
+        },
+        "photoURL": "https://lh3.googleusercontent.com/a/ACg8ocJX3x0DYQ_JvBpu4dj19yIUdRWvzjv3MF7mp-kjJmX7BOW5Pryf=s96-c",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778127679,
+          "nanoseconds": 672000000
+        },
+        "provider": "google.com",
+        "userId": "PXzLMzewomW33DoouVbxpO62Oxy1",
+        "role": "customer",
+        "displayName": "Anvir Adeeb",
+        "email": "adeebanvir@gmail.com"
+      },
+      {
+        "_docId": "X4aJMXFiQaSaBqG5FBHOzdLbWw03",
+        "displayName": "Farhan Labib",
+        "email": "fl3539122@gmail.com",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778377752,
+          "nanoseconds": 40000000
+        },
+        "provider": "google.com",
+        "photoURL": "https://lh3.googleusercontent.com/a/ACg8ocIGaCE9vTrz1IGG2IVMF2VzKb57-X0uFBH9odfQWE73qb0J3HTU=s96-c",
+        "role": "customer",
+        "userId": "X4aJMXFiQaSaBqG5FBHOzdLbWw03",
+        "status": "active",
+        "lastLogin": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778657619,
+          "nanoseconds": 215000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778657619,
+          "nanoseconds": 215000000
+        }
+      },
+      {
+        "_docId": "jKQQY2buPtdnHC4gLzeHfBd0qJ92",
+        "lastLogin": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778469185,
+          "nanoseconds": 1000000
+        },
+        "updatedAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778469185,
+          "nanoseconds": 1000000
+        },
+        "email": "aminfarhan@gmail.com",
+        "provider": "password",
+        "displayName": "Aminfarhan",
+        "status": "active",
+        "role": "customer",
+        "userId": "jKQQY2buPtdnHC4gLzeHfBd0qJ92",
+        "createdAt": {
+          "type": "firestore/timestamp/1.0",
+          "seconds": 1778467905,
+          "nanoseconds": 979000000
+        },
+        "photoURL": "https://ui-avatars.com/api/?name=aminfarhan@gmail.com&background=00A650&color=fff"
+      }
+    ]
+  }
+}
