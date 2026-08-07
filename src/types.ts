@@ -132,6 +132,12 @@ export interface Banner {
   createdAt?: any;
 }
 
+export interface SocialLink {
+  id: string;
+  platform: 'facebook' | 'twitter' | 'instagram' | 'linkedin' | 'youtube' | 'tiktok' | 'github';
+  url: string;
+}
+
 export interface AppSetting {
   id: string;
   whatWeAreTitle: string;
@@ -149,6 +155,8 @@ export interface AppSetting {
   address?: string;
   responseTime?: string;
   featuredInnovationId?: string;
+  footerText?: string;
+  socialLinks?: SocialLink[];
 }
 
 export interface FAQItem {

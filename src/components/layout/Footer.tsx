@@ -1,7 +1,38 @@
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Cpu, Facebook, Twitter, Instagram, Youtube, Mail } from 'lucide-react';
+import { Cpu, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Video, Mail, Share2 } from 'lucide-react';
+import { settingsService } from '../../services/dataService';
+import { AppSetting, SocialLink } from '../../types';
+
+const ICON_MAP: Record<string, React.ElementType> = {
+  facebook: Facebook,
+  twitter: Twitter,
+  instagram: Instagram,
+  linkedin: Linkedin,
+  youtube: Youtube,
+  tiktok: Video,
+  github: Github,
+};
 
 export default function Footer() {
+  const [settings, setSettings] = useState<AppSetting | null>(null);
+
+  useEffect(() => {
+    settingsService.getSettings('home').then(data => {
+      if (data) setSettings(data);
+    }).catch(err => console.error("Failed to load footer settings", err));
+  }, []);
+
+  const footerDescription = settings?.footerText || "Defining the future of consumer tech. We craft premium gadgets that blend cutting-edge performance with minimalist design.";
+
+  const socialLinks: SocialLink[] = (settings?.socialLinks && settings.socialLinks.length > 0)
+    ? settings.socialLinks.slice(0, 4)
+    : [
+        { id: '1', platform: 'facebook', url: '#' },
+        { id: '2', platform: 'twitter', url: '#' },
+        { id: '3', platform: 'instagram', url: '#' },
+      ];
+
   return (
     <footer className="bg-[#141414] text-white pt-8 pb-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,18 +48,24 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-gray-400 text-[11px] leading-relaxed max-w-xs">
-              Defining the future of consumer tech. We craft premium gadgets that blend cutting-edge performance with minimalist design.
+              {footerDescription}
             </p>
             <div className="flex space-x-3">
-              <a href="#" className="p-1.5 bg-white/5 rounded-lg hover:bg-[#00A650] transition-colors">
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a href="#" className="p-1.5 bg-white/5 rounded-lg hover:bg-[#00A650] transition-colors">
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a href="#" className="p-1.5 bg-white/5 rounded-lg hover:bg-[#00A650] transition-colors">
-                <Instagram className="w-4 h-4" />
-              </a>
+              {socialLinks.map((social) => {
+                const IconComp = ICON_MAP[social.platform] || Share2;
+                return (
+                  <a 
+                    key={social.id} 
+                    href={social.url.startsWith('http') ? social.url : '#'} 
+                    target={social.url.startsWith('http') ? "_blank" : "_self"}
+                    rel="noopener noreferrer"
+                    className="p-1.5 bg-white/5 rounded-lg hover:bg-[#00A650] transition-colors"
+                    title={social.platform}
+                  >
+                    <IconComp className="w-4 h-4" />
+                  </a>
+                );
+              })}
             </div>
           </div>
 

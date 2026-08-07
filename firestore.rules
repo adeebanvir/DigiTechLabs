@@ -141,6 +141,24 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // FAQs (Public Read, Admin Write)
+    match /faqs/{faqId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Policies (Public Read, Admin Write)
+    match /policies/{policyId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Tax Rates (Public Read, Admin Write)
+    match /taxRates/{taxId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // USERS (Pillar 6: PII isolation implicitly handled by isOwner/isAdmin)
     match /users/{userId} {
       allow get: if (isOwner(userId) || isAdmin()) && isValidId(userId);

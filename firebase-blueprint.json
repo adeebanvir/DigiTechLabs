@@ -190,9 +190,53 @@
         "address": { "type": "string" },
         "responseTime": { "type": "string" }
       }
+    },
+    "Policy": {
+      "title": "Policy Document",
+      "description": "Legal or operational store policy document.",
+      "type": "object",
+      "properties": {
+        "slug": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["slug", "title", "content"]
+    },
+    "FAQ": {
+      "title": "FAQ Item",
+      "description": "Frequently asked question and answer.",
+      "type": "object",
+      "properties": {
+        "question": { "type": "string" },
+        "answer": { "type": "string" }
+      },
+      "required": ["question", "answer"]
+    },
+    "TaxRate": {
+      "title": "Tax Rate",
+      "description": "Country-specific sales tax rate percentage.",
+      "type": "object",
+      "properties": {
+        "country": { "type": "string" },
+        "ratePercent": { "type": "number" }
+      },
+      "required": ["country", "ratePercent"]
     }
   },
   "firestore": {
+    "policies/{policyId}": {
+      "schema": "Policy",
+      "description": "Store policies such as shipping, refunds, warranty, privacy, and terms."
+    },
+    "faqs/{faqId}": {
+      "schema": "FAQ",
+      "description": "Frequently asked questions list."
+    },
+    "taxRates/{taxId}": {
+      "schema": "TaxRate",
+      "description": "Regional tax rates by country."
+    },
     "settings/{settingId}": {
       "schema": "AppSetting",
       "description": "Global site settings and configuration."

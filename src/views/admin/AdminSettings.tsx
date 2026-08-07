@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Save, Loader2, Plus, X, Tag, Info, Image as ImageIcon, Link as LinkIcon, Edit2, Mail } from 'lucide-react';
-import { AppSetting, Banner } from '../../types';
+import { Save, Loader2, Plus, X, Tag, Info, Image as ImageIcon, Link as LinkIcon, Edit2, Mail, Share2, Globe, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Video } from 'lucide-react';
+import { AppSetting, Banner, SocialLink } from '../../types';
 import { settingsService } from '../../services/dataService';
+
+const SOCIAL_PLATFORMS = [
+  { id: 'facebook', name: 'Facebook', icon: Facebook },
+  { id: 'twitter', name: 'X / Twitter', icon: Twitter },
+  { id: 'instagram', name: 'Instagram', icon: Instagram },
+  { id: 'linkedin', name: 'LinkedIn', icon: Linkedin },
+  { id: 'youtube', name: 'YouTube', icon: Youtube },
+  { id: 'tiktok', name: 'TikTok', icon: Video },
+  { id: 'github', name: 'GitHub', icon: Github },
+];
 
 const DEFAULT_BANNERS: Banner[] = [
   {
@@ -65,7 +75,13 @@ export default function AdminSettings() {
           partnershipsEmail: data.partnershipsEmail || "growth@digitechlabs.com",
           phone: data.phone || "+1 (888) DIGI-LAB",
           address: data.address || "One Infinite Loop, Tech City",
-          responseTime: data.responseTime || "Currently active: 12-24 hour response window."
+          responseTime: data.responseTime || "Currently active: 12-24 hour response window.",
+          footerText: data.footerText || "Defining the future of consumer tech. We craft premium gadgets that blend cutting-edge performance with minimalist design.",
+          socialLinks: data.socialLinks || [
+            { id: '1', platform: 'facebook', url: 'https://facebook.com' },
+            { id: '2', platform: 'twitter', url: 'https://x.com' },
+            { id: '3', platform: 'instagram', url: 'https://instagram.com' }
+          ]
         });
       } else {
         setSettings({
@@ -83,7 +99,13 @@ export default function AdminSettings() {
             partnershipsEmail: "growth@digitechlabs.com",
             phone: "+1 (888) DIGI-LAB",
             address: "One Infinite Loop, Tech City",
-            responseTime: "Currently active: 12-24 hour response window."
+            responseTime: "Currently active: 12-24 hour response window.",
+            footerText: "Defining the future of consumer tech. We craft premium gadgets that blend cutting-edge performance with minimalist design.",
+            socialLinks: [
+              { id: '1', platform: 'facebook', url: 'https://facebook.com' },
+              { id: '2', platform: 'twitter', url: 'https://x.com' },
+              { id: '3', platform: 'instagram', url: 'https://instagram.com' }
+            ]
         });
       }
       setLoading(false);
@@ -174,6 +196,41 @@ export default function AdminSettings() {
     setSettings({
       ...settings,
       banners: settings.banners.filter(b => b.id !== id)
+    });
+  };
+
+  const addSocialLink = () => {
+    if (!settings) return;
+    const current = settings.socialLinks || [];
+    if (current.length >= 4) {
+      alert('Maximum of 4 social media links allowed in the footer.');
+      return;
+    }
+    const unusedPlatform = SOCIAL_PLATFORMS.find(p => !current.some(c => c.platform === p.id))?.id || 'facebook';
+    const newSocial: SocialLink = {
+      id: Math.random().toString(36).substr(2, 9),
+      platform: unusedPlatform as any,
+      url: 'https://'
+    };
+    setSettings({
+      ...settings,
+      socialLinks: [...current, newSocial]
+    });
+  };
+
+  const updateSocialLink = (id: string, updates: Partial<SocialLink>) => {
+    if (!settings) return;
+    setSettings({
+      ...settings,
+      socialLinks: (settings.socialLinks || []).map(s => s.id === id ? { ...s, ...updates } : s)
+    });
+  };
+
+  const removeSocialLink = (id: string) => {
+    if (!settings) return;
+    setSettings({
+      ...settings,
+      socialLinks: (settings.socialLinks || []).filter(s => s.id !== id)
     });
   };
 
@@ -489,6 +546,101 @@ export default function AdminSettings() {
               placeholder="e.g., One Infinite Loop, Tech City"
               required
             />
+          </div>
+        </div>
+
+        {/* Footer Brand & Social Links */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-6">
+          <div className="flex items-center space-x-3 mb-2">
+            <div className="p-2 bg-purple-500/10 text-purple-600 rounded-xl">
+               <Share2 size={18} />
+            </div>
+            <div>
+              <h3 className="font-bold text-[#141414]">Footer Branding & Social Links</h3>
+              <p className="text-xs text-gray-500">Configure description below logo and up to 4 social media platform buttons.</p>
+            </div>
+          </div>
+
+          {/* Footer Text Below Logo */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Footer Description (Below Logo)</label>
+            <textarea 
+              rows={3}
+              value={settings?.footerText || ''}
+              onChange={e => setSettings(prev => prev ? {...prev, footerText: e.target.value} : null)}
+              className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-[#00A650]/20 font-medium text-sm leading-relaxed resize-none"
+              placeholder="e.g., Defining the future of consumer tech..."
+              required
+            />
+          </div>
+
+          {/* Social Links Manager */}
+          <div className="space-y-4 pt-4 border-t border-gray-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">Social Media Platforms (Max 4)</label>
+                <p className="text-xs text-gray-400 px-1 mt-0.5">Select platform and input direct URL. Displayed in footer.</p>
+              </div>
+              <button
+                type="button"
+                onClick={addSocialLink}
+                disabled={(settings?.socialLinks || []).length >= 4}
+                className="flex items-center gap-2 px-4 py-2 bg-[#00A650] text-white rounded-xl text-xs font-bold hover:bg-[#009245] transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-[#00A650]/20"
+              >
+                <Plus size={16} />
+                <span>Add Social ({settings?.socialLinks?.length || 0}/4)</span>
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {(settings?.socialLinks || []).map((social) => {
+                const iconObj = SOCIAL_PLATFORMS.find(p => p.id === social.platform);
+                const PlatformIcon = iconObj ? iconObj.icon : Share2;
+                return (
+                  <div key={social.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col md:flex-row md:items-center gap-4">
+                    <div className="flex items-center gap-3 shrink-0">
+                      <div className="w-10 h-10 bg-white text-gray-800 rounded-xl flex items-center justify-center border border-gray-100 shadow-sm">
+                        <PlatformIcon size={18} />
+                      </div>
+                      <select
+                        value={social.platform}
+                        onChange={e => updateSocialLink(social.id, { platform: e.target.value as any })}
+                        className="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 focus:outline-none focus:border-[#00A650]"
+                      >
+                        {SOCIAL_PLATFORMS.map(p => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="flex-grow">
+                      <input 
+                        type="url"
+                        value={social.url}
+                        onChange={e => updateSocialLink(social.id, { url: e.target.value })}
+                        placeholder="https://yourprofile.com"
+                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-xs font-mono text-gray-800 focus:outline-none focus:border-[#00A650]"
+                        required
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => removeSocialLink(social.id)}
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all self-end md:self-center shrink-0"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                );
+              })}
+
+              {(settings?.socialLinks || []).length === 0 && (
+                <div className="p-6 bg-gray-50 rounded-2xl text-center text-xs text-gray-400 italic">
+                  No social links added. Default social icons will be shown in the footer.
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
